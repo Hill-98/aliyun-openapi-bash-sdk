@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# https://help.aliyun.com/document_detail/126507.html
+# https://help.aliyun.com/document_detail/106661.html
+
 # 可用于 acme.sh 的 renewHook 脚本，可以自动更新阿里云 SSL 证书并更新对应 CDN 域名，然后删除对应域名旧的证书。
 # 每次 API 的执行都会检测是否失败，如果失败，会中断脚本执行并返回自定义错误代码
 
