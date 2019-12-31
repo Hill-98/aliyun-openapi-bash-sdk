@@ -2,23 +2,29 @@
 
 ## 介绍
 
-这是一个非官方的阿里云 OpenAPI Shell SDK，目的是方便 Shell 脚本直接调用阿里云 OpenAPI，主要是实现了自动计算签名。
+这是一个非官方的阿里云 OpenAPI Shell SDK，为了方便 Shell 脚本调用阿里云 OpenAPI，SDK 主要实现了自动计算请求签名。
 
-虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以方便的在 Shell 环境下调用阿里云 OpenAPI。不过某些 API (比如 SSL 证书) 它并不支持，所以我就想写一个可能是最好用的 Shell SDK。
+虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI。不过某些 API (比如 SSL 证书) 它并不支持，或者说还没来得及支持，所以我就想写一个可能是最好用的阿里云 Shell SDK。
 
-这个 SDK 理论上支持所有阿里云 RPC OpenAPI，RESTful OpenAPI 暂不支持，因为我暂时没用到，以后可能会考虑支持。
+理论上支持所有阿里云 RPC OpenAPI，RESTful OpenAPI 暂不支持，将来可能会支持。
 
 ## 依赖
 
-SDK 主要依赖于 `curl`, `openssl`, `python3`
+* curl
+* OpenSSL
+* Python3
 
-其中 `python3` 用于 `urlencode`，因为纯 Shell 实现的 `urlencode` 可用性较低，索性就直接调用 Python 实现，内部的 Python 代码不兼容 Python2，只能运行于 Python3。
+Python3 用于 `urlencode`，因为纯 Shell 实现的 `urlencode` 可用性较低，索性就直接使用 Python，不兼容 Python2。
 
 ## 使用
 
-使用起来非常简单，只需要在你的 Shell 脚本顶部导出`AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量，导入 `AliyunOpenAPI.sh`，调用 `aliapi_rpc` 函数使用阿里云 API。
+1. 导出`AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量
+2. 导入 `AliyunOpenAPI.sh`
+3. 调用 `aliapi_rpc` 函数
 
 函数签名：`aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode`
+
+**示例：**
 
 ```bash
 #!/usr/bin/env bash
@@ -58,7 +64,7 @@ fi
 
 ```
 
-更多使用方法可以参考 `example` 下的示例
+更多示例请参考 `example` 下的文件
 
 如果你有好的示例，欢迎提交 [PR](https://github.com/Hill-98/aliyun-openapi-shell-sdk/pulls)
 
