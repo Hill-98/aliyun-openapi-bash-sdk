@@ -16,39 +16,39 @@ SDK 主要依赖于 `curl`, `openssl`, `python3`
 
 ## 使用
 
-使用起来非常简单，只需要在你的 Shell 脚本顶部导出`AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量，然后引用 `AliyunOpenAPI.sh` 即可。
+使用起来非常简单，只需要在你的 Shell 脚本顶部导出`AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量，导入 `AliyunOpenAPI.sh`，调用 `aliapi_rpc` 函数使用阿里云 API。
+
+函数签名：`aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode`
 
 ```bash
 #!/usr/bin/env bash
-# 务必使用 export 导出
+# 导出环境变量
 export AliAccessKeyId="<AliAccessKeyId>" # 此处替换为你的阿里云 AliAccessKeyId
 export AliAccessKeySecret="<AliAccessKeySecret>" # 此处替换为你的阿里云 AliAccessKeySecret
-
+# 导入 SDK
 . AliyunOpenAPI.sh
 
-# 自定义 GET 参数的键值顺序要一一对应，而且不能包含空格。
-# 自定义值支持自定义函数，如果你需要包含空格或者读取文件等操作，可以声明一个自定义函数，然后按照此格式填写：函数名()，就比如下面这样。
-# SDK 在处理值的时候会自动执行自定义函数，但是如果自定义函数不存在则会导致获取值失败。
+# 自定义请求参数的键值数组顺序要一一对应，数组成员不能包含空格。
+# 自定义值支持自定义函数，如果你需要包含空格或者读取文件等操作，可以声明一个自定义函数，像下面这样。
+# 如果自定义值数组成员以 () 结尾，SDK 在处理值的时候会自动执行自定义函数，但是如果自定义函数不存在则会导致获取值失败。
 
 get_show_size() {
     echo 50
 }
 
-# 自定义 GET 参数的键
+# 自定义请求参数的键
 ali_custom_key=(
     "CurrentPage"
     "ShowSize"
 )
-# 自定义 GET 参数的值
+# 自定义请求参数的值
 ali_custom_value=(
     "1"
-    "get_show_size()"
+    "get_show_size()" # 这个值会在解析的时候执行函数获取
 )
-# 获取阿里云 SSL 证书列表
-# aliapi_rpc 的函数签名如下
-# aliapi_rpc <host> <http_method> <api_version> <api_action> <api_custom_key[]> <api_custom_value[]>
+# 获取 SSL 证书列表：https://help.aliyun.com/document_detail/126511.html
 aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${ali_custom_key[*]}" "${ali_custom_value[*]}"
-# 可以通过 $? 是否等于 0 来判断是否执行成功（HTTP CODE == 200）
+# 可以通过 $? 是否等于 0 判断是否执行成功（HTTP CODE == 200）
 # 执行成功返回 JSON 格式的结果，执行失败返回 HTTP CODE 或 curl 的退出代码。
 if [[ $? -eq 0 ]]; then
     # 执行成功
