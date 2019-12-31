@@ -1,6 +1,6 @@
-Aliyun OpenAPI Shell SDK
---
-# 介绍
+# Aliyun OpenAPI Shell SDK
+
+## 介绍
 
 这是一个非官方的阿里云 OpenAPI Shell SDK，目的是方便 Shell 脚本直接调用阿里云 OpenAPI，主要是实现了自动计算签名。
 
@@ -8,13 +8,13 @@ Aliyun OpenAPI Shell SDK
 
 这个 SDK 理论上支持所有阿里云 RPC OpenAPI，RESTful OpenAPI 暂不支持，因为我暂时没用到，以后可能会考虑支持。
 
-# 依赖
+## 依赖
 
 SDK 主要依赖于 `curl`, `openssl`, `python3`
 
 其中 `python3` 用于 `urlencode`，因为纯 Shell 实现的 `urlencode` 可用性较低，索性就直接调用 Python 实现，内部的 Python 代码不兼容 Python2，只能运行于 Python3。
 
-# 使用
+## 使用
 
 使用起来非常简单，只需要在你的 Shell 脚本顶部导出`AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量，然后引用 `AliyunOpenAPI.sh` 即可。
 
