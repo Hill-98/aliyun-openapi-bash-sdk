@@ -6,12 +6,15 @@ for c in openssl curl; do
     fi
 done
 
-if ! _AliAccessKeyId=$(printenv AliAccessKeyId); then
-     echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found"
-     exit 1
+declare AliAccessKeyId AliAccessKeySecret
+readonly _AliAccessKeyId=${AliAccessKeyId}
+readonly _AliAccessKeySecret=${AliAccessKeySecret}
+if [[ -z ${_AliAccessKeyId} ]]; then
+    echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found or null"
+    exit 1
 fi
-if ! _AliAccessKeySecret=$(printenv AliAccessKeySecret); then
-    echo "Aliyun OpenAPI SDK: 'AliAccessKeySecret' environment variable not found"
+if [[ -z ${_AliAccessKeySecret} ]]; then
+    echo "Aliyun OpenAPI SDK: 'AliAccessKeySecret' environment variable not found or null"
     exit 1
 fi
 
@@ -44,12 +47,11 @@ aliapi_rpc() {
         "$(_ali_timestamp_rpc)"
         "$_api_version"
     )
+    declare -a _ali_custom_key _ali_custom_value _ali_key _ali_value
     # 自定义查询参数键值
-    local _ali_custom_key=() _ali_custom_value=()
     read -r -a _ali_custom_key <<< "$5"
     read -r -a _ali_custom_value <<< "$6"
     # 合并查询键值
-    local _ali_key=() _ali_value=()
     read -r -a _ali_key <<< "${_api_common_key[*]} ${_ali_custom_key[*]}"
     read -r -a _ali_value <<< "${_ali_common_value[*]} ${_ali_custom_value[*]}"
     local _http_host=$1 _http_method=$2
