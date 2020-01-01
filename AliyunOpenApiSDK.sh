@@ -1,45 +1,48 @@
 #!/usr/bin/env bash
-_exit() {
-    echo "$2"
-    exit "$1"
-}
-
 for c in openssl curl; do
     if ! command -v ${c} > /dev/null; then
-        _exit 127 "Aliyun OpenAPI SDK: ${c} command not found"
+        echo "Aliyun OpenAPI SDK: ${c} command not found"
+        exit 127
     fi
 done
 
-_AliAccessKeyId=$(printenv AliAccessKeyId)
-_AliAccessKeySecret=$(printenv AliAccessKeySecret)
-_ali_format_rpc=JSON
-_ali_signature_method=HMAC-SHA1
-_ali_signature_version=1.0
+if ! _AliAccessKeyId=$(printenv AliAccessKeyId); then
+     echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found"
+     exit 1
+fi
+if ! _AliAccessKeySecret=$(printenv AliAccessKeySecret); then
+    echo "Aliyun OpenAPI SDK: 'AliAccessKeySecret' environment variable not found"
+    exit 1
+fi
 
 # aliapi_rpc <host> <http_method> <api_version> <api_action> <api_custom_key[]> <api_custom_value[]>
 aliapi_rpc() {
-    [[ $# -lt 6 ]] && return 66
+    if [[ $# -lt 6 ]];then
+        echo "Aliyun OpenAPI SDK: aliapi_rpc() not enough parameters"
+        return 66
+    fi
+    local _api_action=$4 _api_version=$3
     # 公共查询参数键
     local _api_common_key=(
-        "Format"
         "AccessKeyId"
+        "Action"
+        "Format"
         "SignatureMethod"
-        "Timestamp"
         "SignatureVersion"
         "SignatureNonce"
+        "Timestamp"
         "Version"
-        "Action"
     )
     # 公共查询参数值
     local _ali_common_value=(
-        "$_ali_format_rpc"
         "$_AliAccessKeyId"
-        "$_ali_signature_method"
-        "$(_ali_timestamp_rpc)"
-        "$_ali_signature_version"
+        "$_api_action"
+        "JSON"
+        "HMAC-SHA1"
+        "1.0"
         "$(_ali_signature_nonce)"
-        "$3"
-        "$4"
+        "$(_ali_timestamp_rpc)"
+        "$_api_version"
     )
     # 自定义查询参数键值
     local _ali_custom_key=() _ali_custom_value=()
