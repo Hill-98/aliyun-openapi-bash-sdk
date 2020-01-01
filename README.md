@@ -17,7 +17,7 @@
 
 1. 导出 `AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量
 2. 导入 `AliyunOpenApiSDK.sh`
-3. 调用 `aliapi_rpiSDK` 函数
+3. 调用 `aliapi_rpi` 函数
 
 函数签名：`aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode`
 
@@ -40,17 +40,17 @@ get_show_size() {
 }
 
 # 自定义请求参数的键
-ali_custom_key=(
+api_custom_key=(
     "CurrentPage"
     "ShowSize"
 )
 # 自定义请求参数的值
-ali_custom_value=(
+api_custom_value=(
     "1"
     "get_show_size()" # 这个值会在解析的时候执行函数获取
 )
 # 获取 SSL 证书列表：https://help.aliyun.com/document_detail/126511.html
-aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${ali_custom_key[*]}" "${ali_custom_value[*]}"
+aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${api_custom_key[*]}" "${api_custom_value[*]}"
 # 可以通过 $? 是否等于 0 判断是否执行成功（HTTP CODE == 200）
 # 执行成功返回 JSON 格式的结果，执行失败返回 HTTP CODE 或 curl 的退出代码。
 if [[ $? -eq 0 ]]; then
