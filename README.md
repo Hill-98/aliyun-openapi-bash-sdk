@@ -4,23 +4,20 @@
 
 这是一个非官方的阿里云 OpenAPI Shell SDK，为了方便 Shell 脚本调用阿里云 OpenAPI，SDK 主要实现了自动计算请求签名。
 
-虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI。不过某些 API (比如 SSL 证书) 它并不支持，或者说还没来得及支持，所以我就想写一个可能是最好用的阿里云 Shell SDK。
+虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI，不过某些 API (比如 SSL 证书) 它并不支持，或者说还没来得及支持，所以我就想写一个可能是最好用的阿里云 Shell SDK。
 
 理论上支持所有阿里云 RPC OpenAPI，RESTful OpenAPI 暂不支持，将来可能会支持。
 
 ## 依赖
 
 * curl
-* OpenSSL
-* Python3
-
-Python3 用于 `urlencode`，因为纯 Shell 实现的 `urlencode` 可用性较低，索性就直接使用 Python，不兼容 Python2。
+* openssl
 
 ## 使用
 
-1. 导出`AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量
-2. 导入 `AliyunOpenAPI.sh`
-3. 调用 `aliapi_rpc` 函数
+1. 导出 `AliAccessKeyId` 和 `AliAccessKeySecret` 环境变量
+2. 导入 `AliyunOpenApiSDK.sh`
+3. 调用 `aliapi_rpiSDK` 函数
 
 函数签名：`aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode`
 
@@ -28,11 +25,11 @@ Python3 用于 `urlencode`，因为纯 Shell 实现的 `urlencode` 可用性较�
 
 ```bash
 #!/usr/bin/env bash
-# 导出环境变量
-export AliAccessKeyId="<AliAccessKeyId>" # 此处替换为你的阿里云 AliAccessKeyId
-export AliAccessKeySecret="<AliAccessKeySecret>" # 此处替换为你的阿里云 AliAccessKeySecret
+# 导出 AliAccessKeyId 和 AliAccessKeySecret
+export AliAccessKeyId="<AliAccessKeyId>"
+export AliAccessKeySecret="<AliAccessKeySecret>"
 # 导入 SDK
-. AliyunOpenAPI.sh
+. AliyunOpenApiSDK.sh
 
 # 自定义请求参数的键值数组顺序要一一对应，数组成员不能包含空格。
 # 自定义值支持自定义函数，如果你需要包含空格或者读取文件等操作，可以声明一个自定义函数，像下面这样。

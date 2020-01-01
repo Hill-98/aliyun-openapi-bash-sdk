@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-for c in openssl curl python3; do
+_exit() {
+    echo "$2"
+    exit "$1"
+}
+
+for c in openssl curl; do
     if ! command -v ${c} > /dev/null; then
-        echo "${c}: command not found"
-        exit 127
+        _exit 127 "Aliyun OpenAPI SDK: ${c} command not found"
     fi
 done
 
@@ -11,7 +15,6 @@ _AliAccessKeySecret=$(printenv AliAccessKeySecret)
 _ali_format_rpc=JSON
 _ali_signature_method=HMAC-SHA1
 _ali_signature_version=1.0
-_urlencode_pycode="from sys import stdin;from urllib.parse import quote;print(quote(stdin.read(), '-_.~'))"
 
 # aliapi_rpc <host> <http_method> <api_version> <api_action> <api_custom_key[]> <api_custom_value[]>
 aliapi_rpc() {
@@ -78,7 +81,7 @@ _ali_signature_rpc() {
 
 _ali_timestamp_rpc() {
     # ISO8601 UTC
-    date -u +%FT%TZ
+    date -u "+%FT%TZ"
 }
 
 _ali_signature_nonce() {
@@ -86,5 +89,7 @@ _ali_signature_nonce() {
 }
 
 _urlencode() {
-   echo -n "$1" | python3 -c "$_urlencode_pycode"
+    local result
+    result=$(curl -G -s -o /dev/null -w "%{url_effective}" --data-urlencode "=$1" file:///dev/null)
+    echo "${result#*\?}"
 }
