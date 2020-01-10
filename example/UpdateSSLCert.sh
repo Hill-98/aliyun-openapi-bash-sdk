@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# CAS https://help.aliyun.com/document_detail/126507.html
-# CDN https://help.aliyun.com/document_detail/106661.html
+# 使用的 OpenAPI
+# CAS: https://help.aliyun.com/document_detail/126507.html
+# CDN：https://help.aliyun.com/document_detail/106661.html
 
 # 可配合 acme.sh 使用的 renewHook 脚本：自动将新证书上传至阿里云并更新对应 CDN 域名，然后删除对应域名的旧证书。
 # 每次 API 执行都会检测是否失败，如果失败，会中断脚本执行并返回自定义错误代码。
 
-# 导出 AliAccessKeyId 和 AliAccessKeySecret
 export AliAccessKeyId="<AliAccessKeyId>"
 export AliAccessKeySecret="<AliAccessKeySecret>"
 # shellcheck disable=SC1091
@@ -24,6 +24,7 @@ ACME_ENV_LIST=(
 for value in "${ACME_ENV_LIST[@]}" ; do
    printenv "$value" > /dev/null || exit 1
 done
+unset value
 
 # 获取证书自定义函数
 get_cert() {
@@ -85,6 +86,8 @@ for domain in "${DOMAIN_LIST[@]}"; do
     )
     aliapi_rpc "cdn.aliyuncs.com" "GET" "2018-05-10" "SetDomainServerCertificate" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 103
 done
+unset domain
+
 # 删除旧的证书
 for id in ${cert_list}; do
     api_custom_key=(
@@ -95,3 +98,4 @@ for id in ${cert_list}; do
     )
     aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DeleteUserCertificate" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 104
 done
+unset id
