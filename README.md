@@ -13,6 +13,10 @@
 * curl
 * openssl
 
+## 注意事项
+
+由于 URL 编码使用了 `curl` 的 `--data-urlencode` 实现，所以每次 URL 编码都会对本地的 65535 端口发起 HTTP 请求，如果你的 65535 端口不是空闲的，为了避免对你的服务造成影响，建议修改脚本的 `_urlencode` 函数。
+
 ## 使用
 
 1. 导出环境变量 `AliAccessKeyId` 和 `AliAccessKeySecret`

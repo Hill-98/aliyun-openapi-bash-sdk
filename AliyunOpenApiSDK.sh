@@ -96,6 +96,6 @@ _ali_signature_nonce() {
 
 _urlencode() {
     local result
-    result=$(curl -G -s -o /dev/null -w "%{url_effective}" --data-urlencode "=$1" file:///dev/null)
+    result=$(curl -G -s -o /dev/null -w "%{url_effective}" --connect-timeout 1  --max-time 1 --data-urlencode "=$1" http://127.0.0.1:65535)
     echo "${result#*\?}"
 }
