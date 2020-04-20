@@ -10,6 +10,8 @@
 
 ## 依赖
 
+* bash
+* coreutils
 * curl
 * openssl
 
@@ -23,21 +25,25 @@
 2. 导入 `AliyunOpenApiSDK.sh`
 3. 调用 `aliapi_rpc` 函数
 
-函数签名：`aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode`
+函数签名：
+```
+aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode
+```
 
 **示例：**
 
 ```bash
 #!/usr/bin/env bash
+
 # 导出 AliAccessKeyId 和 AliAccessKeySecret
 export AliAccessKeyId="<AliAccessKeyId>"
 export AliAccessKeySecret="<AliAccessKeySecret>"
 # 导入 SDK
-. AliyunOpenApiSDK.sh
+source AliyunOpenApiSDK.sh
 
 # 自定义请求参数的键值数组顺序要一一对应，数组成员不能包含空格。
 # 自定义值支持自定义函数，如果你需要包含空格或者读取文件等操作，可以声明一个自定义函数，像下面这样。
-# 如果自定义值数组成员以 () 结尾，SDK 在获取值的时候会判断自定义函数是否存在并执行，如果不存在则取原始值。
+# 如果自定义值数组成员以 () 结尾，SDK 在获取值的时候会判断自定义函数是否存在并执行，如果不存在则使用原始值。
 
 get_show_size() {
     echo 50
@@ -51,18 +57,17 @@ api_custom_key=(
 # 自定义请求参数的值
 api_custom_value=(
     "1"
-    "get_show_size()" # 这个值会在解析的时候执行函数获取
+    "get_show_size()" # 解析参数时会执行函数 (所以最后提交的值是 50)
 )
 # 获取 SSL 证书列表：https://help.aliyun.com/document_detail/126511.html
 aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${api_custom_key[*]}" "${api_custom_value[*]}"
 # $? (返回代码) 等于 0 (HTTP 状态码 == 200) 代表执行成功
-# 执行成功返回 JSON 数据，执行失败返回 HTTP 状态码或 curl 的错误代码。
+# 执行成功返回 JSON 数据，执行失败返回 HTTP 状态码或 curl 的错误代码 ($?)。
 if [[ $? -eq 0 ]]; then
     # 执行成功
 else
     # 执行失败
 fi
-
 ```
 
 更多示例请参考 `example` 下的文件

@@ -10,7 +10,7 @@
 export AliAccessKeyId="<AliAccessKeyId>"
 export AliAccessKeySecret="<AliAccessKeySecret>"
 # shellcheck disable=SC1091
-. ../AliyunOpenApiSDK.sh
+source ../AliyunOpenApiSDK.sh
 
 # acme.sh 执行 renewHook 时导出的环境变量列表
 ACME_ENV_LIST=(
@@ -22,21 +22,22 @@ ACME_ENV_LIST=(
 )
 # 检查环境变量是否存在
 for value in "${ACME_ENV_LIST[@]}" ; do
-   printenv "$value" > /dev/null || exit 1
+   declare -p "$value" &>/dev/null || exit 1
 done
 unset value
 
 # 获取证书自定义函数
 get_cert() {
     # 使用 sed 删除掉证书文件的空行
-    sed -e "/^$/d" "$(printenv CERT_FULLCHAIN_PATH)"
+    sed -e "/^$/d" "$CERT_FULLCHAIN_PATH"
 }
 # 获取密钥自定义函数
 get_key() {
-    cat "$(printenv CERT_KEY_PATH)"
+    cat "$CERT_KEY_PATH"
 }
 
-DOMAIN=$(printenv Le_Domain)
+# shellcheck disable=SC2154
+DOMAIN=$Le_Domain
 # 证书名称
 CERT_NAME="${DOMAIN}-$(date +%s)"
 # 需要更新证书的 CDN 域名列表
@@ -55,7 +56,7 @@ api_custom_value=(
 # 获取证书列表
 result=$(aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 101)
 # 使用 jq 处理返回的 JSON 数据并提取出匹配当前证书域名的证书列表的 ID，用于稍后的删除旧证书操作。
-cert_list=$(echo "$result" | jq -cr ".CertificateList|map(select(.common == \"${DOMAIN}\"))|map(.id)|.[]")
+cert_list=$(jq -cr ".CertificateList|map(select(.common == \"${DOMAIN}\"))|map(.id)|.[]" <<< "$result")
 
 api_custom_key=(
     "Cert"
