@@ -11,13 +11,8 @@
 ## 依赖
 
 * bash
-* coreutils
 * curl
 * openssl
-
-## 注意事项
-
-由于 URL 编码使用了 `curl` 的 `--data-urlencode` 实现，所以每次 URL 编码都会对本地的 65535 端口发起 HTTP 请求，如果你的 65535 端口不是空闲的，为了避免对你的服务造成影响，建议修改脚本的 `_urlencode` 函数。
 
 ## 使用
 
@@ -27,7 +22,7 @@
 
 函数签名：
 ```
-aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult | ErrorCode
+aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult
 ```
 
 **示例：**
@@ -61,8 +56,8 @@ api_custom_value=(
 )
 # 获取 SSL 证书列表：https://help.aliyun.com/document_detail/126511.html
 aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${api_custom_key[*]}" "${api_custom_value[*]}"
-# $? (返回代码) 等于 0 (HTTP 状态码 == 200) 代表执行成功
-# 执行成功返回 JSON 数据，执行失败返回 HTTP 状态码或 curl 的错误代码 ($?)。
+# $? == 0 代表 HTTP CODE == 200 反之 $? == 1
+# 只要 curl 的返回代码 == 0 就会返回接收到的数据
 if [[ $? -eq 0 ]]; then
     # 执行成功
 else

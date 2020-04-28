@@ -24,7 +24,10 @@ aliapi_rpc() {
         echo "Aliyun OpenAPI SDK: aliapi_rpc() not enough parameters"
         return 66
     fi
-    local _api_action=$4 _api_version=$3
+    local _http_host=$1 _http_method=$2 _api_action=$4 _api_version=$3
+    # 为了兼容 BusyBox
+    # shellcheck disable=SC2018,SC2019
+    _http_method=$(tr "a-z" "A-Z" <<< "$_http_method")
     # 公共查询参数键
     local _api_common_key=(
         "AccessKeyId"
@@ -54,7 +57,6 @@ aliapi_rpc() {
     # 合并查询键值
     read -r -a _ali_key <<< "${_api_common_key[*]} ${_ali_custom_key[*]}"
     read -r -a _ali_value <<< "${_ali_common_value[*]} ${_ali_custom_value[*]}"
-    local _http_host=$1 _http_method=$2
     local _query_str=""
     local _key _value
     local i
@@ -69,12 +71,11 @@ aliapi_rpc() {
     local _ali_signature_value
     _ali_signature_value=$(_ali_signature_rpc "$_http_method" "$_query_str")
     _query_str+="Signature=$(_urlencode "$_ali_signature_value")"
-    local _curl_out _result_code _http_url="https://${_http_host}/?${_query_str}"
+    local _curl_out _http_code _http_url="https://${_http_host}/?${_query_str}"
     _curl_out=$(mktemp)
-    _result_code=$(curl -L -s -X "$_http_method" -o "$_curl_out" --write-out "%{http_code}" "$_http_url" || echo $?)
-    cat "$_curl_out" && echo
+    _http_code=$(curl -L -s -S -X "$_http_method" -o "$_curl_out" -w "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
     rm -f "$_curl_out"
-    [[ ${_result_code} -eq 200 ]] && return 0 || return 1
+    [[ ${_http_code} -eq 200 ]] && return 0 || return 1
 }
 
 _ali_signature_rpc() {
@@ -96,6 +97,6 @@ _ali_signature_nonce() {
 
 _urlencode() {
     local result
-    result=$(curl -G -s -o /dev/null -w "%{url_effective}" --connect-timeout 1  --max-time 1 --data-urlencode "=$1" http://127.0.0.1:65535)
+    result=$(curl -G -s -o /dev/null -w "%{url_effective}" -m 1 --data-urlencode "=$1" http://127.0.0.1:99999)
     echo "${result#*\?}"
 }
