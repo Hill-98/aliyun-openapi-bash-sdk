@@ -2,10 +2,11 @@
 
 这是一个非官方的阿里云 OpenAPI Shell SDK，方便 Shell 脚本调用阿里云 OpenAPI，SDK 主要实现了自动计算请求签名。
 
-虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI，不过某些 API (比如 SSL 证书) 它并不支持，或者说还没来得及支持，所以我就想写一个可能是最好用的阿里云 Shell SDK。
-对于存储空间不充足的嵌入式设备，Shell SDK 明显是更好的选择。
+虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI，不过某些 API (比如 SSL 证书) 它并不支持，或者说还没来得及支持，而且对于存储空间有限的嵌入式设备，Shell SDK 明显是更好的选择。
 
-理论上支持所有阿里云 RPC OpenAPI，RESTful OpenAPI 暂不支持，将来可能会支持。
+理论上支持所有阿里云 RPC OpenAPI，暂不支持 RESTful OpenAPI，将来可能会支持。
+
+> 这可能是最好用的 Aliyun Shell SDK
 
 ## 依赖
 
