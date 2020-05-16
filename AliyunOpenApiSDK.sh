@@ -1,6 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/false
+# shellcheck shell=bash
+
 for c in openssl curl; do
-    if ! command -v ${c} > /dev/null; then
+    if ! command -v ${c} &> /dev/null; then
         echo "Aliyun OpenAPI SDK: ${c} command not found"
         exit 127
     fi
