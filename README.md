@@ -22,7 +22,7 @@
 
 函数签名：
 ```
-aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonResult
+aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonString
 ```
 
 **示例：**
@@ -65,7 +65,7 @@ else
 fi
 ```
 
-更多示例请参考 `example` 下的文件
+更多示例请参考 [example](https://github.com/Hill-98/aliyun-openapi-shell-sdk/tree/master/example) 下的文件
 
 如果你有好的示例，欢迎提交 [PR](https://github.com/Hill-98/aliyun-openapi-shell-sdk/pulls)
 
