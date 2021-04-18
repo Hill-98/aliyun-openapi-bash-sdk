@@ -9,20 +9,20 @@ for _command in openssl curl; do
 done
 unset $_command
 
-declare AliAccessKeyId AliAccessKeySecret
-readonly _AliAccessKeyId=$AliAccessKeyId
-readonly _AliAccessKeySecret=$AliAccessKeySecret
-if [[ -z $_AliAccessKeyId ]]; then
-    echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found or null"
-    exit 1
-fi
-if [[ -z $_AliAccessKeySecret ]]; then
-    echo "Aliyun OpenAPI SDK: 'AliAccessKeySecret' environment variable not found or null"
-    exit 1
-fi
-
 # aliapi_rpc <host> <http_method> <api_version> <api_action> <api_custom_key[]> <api_custom_value[]>
 aliapi_rpc() {
+    declare AliAccessKeyId AliAccessKeySecret
+    readonly _AliAccessKeyId=$AliAccessKeyId
+    readonly _AliAccessKeySecret=$AliAccessKeySecret
+    if [[ -z $_AliAccessKeyId ]]; then
+        echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found or null"
+        return 61
+    fi
+    if [[ -z $_AliAccessKeySecret ]]; then
+        echo "Aliyun OpenAPI SDK: 'AliAccessKeySecret' environment variable not found or null"
+        return 62
+    fi
+
     if [[ $# -lt 6 ]];then
         echo "Aliyun OpenAPI SDK: aliapi_rpc() not enough parameters"
         return 66
