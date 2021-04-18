@@ -38,8 +38,8 @@ get_key() {
 
 # shellcheck disable=SC2154
 DOMAIN=$Le_Domain
-# 证书名称
-CERT_NAME="${DOMAIN}-$(date +%s)"
+# 证书名称 (替换域名的 . 为 _，以符合阿里云证书名称规范)
+CERT_NAME="${DOMAIN//./_}-$(date +%s)"
 # 需要更新证书的 CDN 域名列表
 DOMAIN_LIST=(
     "example.example.com"
