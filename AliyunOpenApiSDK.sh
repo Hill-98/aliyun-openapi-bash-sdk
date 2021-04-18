@@ -27,7 +27,7 @@ aliapi_rpc() {
         return 66
     fi
     local _http_host=$1 _http_method=$2 _api_action=$4 _api_version=$3
-    # 为了兼容 BusyBox
+    # 兼容 BusyBox
     # shellcheck disable=SC2018,SC2019
     _http_method=$(tr "a-z" "A-Z" <<< "$_http_method")
     # 公共查询参数键
