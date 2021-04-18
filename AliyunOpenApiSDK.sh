@@ -1,21 +1,22 @@
 #!/bin/false
 # shellcheck shell=bash
 
-for c in openssl curl; do
-    if ! command -v ${c} &> /dev/null; then
-        echo "Aliyun OpenAPI SDK: ${c} command not found"
+for _command in openssl curl; do
+    if ! command -v $_command &> /dev/null; then
+        echo "Aliyun OpenAPI SDK: $_command command not found"
         exit 127
     fi
 done
+unset $_command
 
 declare AliAccessKeyId AliAccessKeySecret
-readonly _AliAccessKeyId=${AliAccessKeyId}
-readonly _AliAccessKeySecret=${AliAccessKeySecret}
-if [[ -z ${_AliAccessKeyId} ]]; then
+readonly _AliAccessKeyId=$AliAccessKeyId
+readonly _AliAccessKeySecret=$AliAccessKeySecret
+if [[ -z $_AliAccessKeyId ]]; then
     echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found or null"
     exit 1
 fi
-if [[ -z ${_AliAccessKeySecret} ]]; then
+if [[ -z $_AliAccessKeySecret ]]; then
     echo "Aliyun OpenAPI SDK: 'AliAccessKeySecret' environment variable not found or null"
     exit 1
 fi
@@ -73,19 +74,19 @@ aliapi_rpc() {
     local _ali_signature_value
     _ali_signature_value=$(_ali_signature_rpc "$_http_method" "$_query_str")
     _query_str+="Signature=$(_urlencode "$_ali_signature_value")"
-    local _curl_out _http_code _http_url="https://${_http_host}/?${_query_str}"
+    local _curl_out _http_code _http_url="https://$_http_host/?$_query_str"
     _curl_out=$(mktemp)
     _http_code=$(curl -L -s -S -X "$_http_method" -o "$_curl_out" -w "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
     rm -f "$_curl_out"
-    [[ ${_http_code} -eq 200 ]] && return 0 || return 1
+    [[ $_http_code -eq 200 ]] && return 0 || return 1
 }
 
 _ali_signature_rpc() {
     local _http_method=$1 _str _query_str _sign_str
     _str=$(echo -n "$2" | tr "&" "\n" | sort)
     _query_str=$(echo -n "$_str" | tr "\n" "&")
-    _sign_str="${_http_method}&$(_urlencode "/")&$(_urlencode "$_query_str")"
-    echo -n "$_sign_str" | openssl sha1 -hmac "${_AliAccessKeySecret}&" -binary | openssl base64 -e
+    _sign_str="$_http_method&$(_urlencode "/")&$(_urlencode "$_query_str")"
+    echo -n "$_sign_str" | openssl sha1 -hmac "$_AliAccessKeySecret&" -binary | openssl base64 -e
 }
 
 _ali_timestamp_rpc() {

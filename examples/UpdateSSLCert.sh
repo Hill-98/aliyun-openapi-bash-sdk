@@ -56,7 +56,7 @@ api_custom_value=(
 # 获取证书列表
 result=$(aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 101)
 # 使用 jq 处理返回的 JSON 数据并提取出匹配当前证书域名的证书列表的 ID，用于稍后的删除旧证书操作。
-cert_list=$(jq -cr ".CertificateList|map(select(.common == \"${DOMAIN}\"))|map(.id)|.[]" <<< "$result")
+cert_list=$(jq -cr ".CertificateList|map(select(.common == \"$DOMAIN\"))|map(.id)|.[]" <<< "$result")
 
 api_custom_key=(
     "Cert"
