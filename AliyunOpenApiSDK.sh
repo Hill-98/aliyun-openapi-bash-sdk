@@ -9,11 +9,14 @@ for _command in openssl curl; do
 done
 unset $_command
 
+declare AliAccessKeyId AliAccessKeySecret
+_AliAccessKeyId=$AliAccessKeyId
+_AliAccessKeySecret=$AliAccessKeySecret
+
 # aliapi_rpc <host> <http_method> <api_version> <api_action> <api_custom_key[]> <api_custom_value[]>
 aliapi_rpc() {
-    declare AliAccessKeyId AliAccessKeySecret
-    readonly _AliAccessKeyId=$AliAccessKeyId
-    readonly _AliAccessKeySecret=$AliAccessKeySecret
+    _AliAccessKeyId=$AliAccessKeyId
+    _AliAccessKeySecret=$AliAccessKeySecret
     if [[ -z $_AliAccessKeyId ]]; then
         echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' environment variable not found or null"
         return 61
@@ -67,7 +70,7 @@ aliapi_rpc() {
         _key=${_ali_key[$i]}
         _value=${_ali_value[$i]}
         # 参数值如果是以 () 结束，代表需要执行函数获取值，如果函数不存在，使用原始值。
-        [[ (${_value%()}  == "${_value:0:-2}" && $(type -t "${_value:0:-2}") == "function") ]] && _value=$(${_value:0:-2})
+        [[ (${_value%()}  != "$_value}" && $(type -t "${_value:0:-2}") == "function") ]] && _value=$(${_value:0:-2})
         _value=$(_urlencode "$_value")
         _query_str+="$_key=$_value&"
     done
