@@ -67,7 +67,7 @@ else
 fi
 ```
 
-更多示例请参考 [example](https://github.com/Hill-98/aliyun-openapi-shell-sdk/tree/master/example) 下的文件
+更多示例请参考 [examples](https://github.com/Hill-98/aliyun-openapi-shell-sdk/tree/master/examples) 下的文件
 
 如果你有好的示例，欢迎提交 [PR](https://github.com/Hill-98/aliyun-openapi-shell-sdk/pulls)
 
