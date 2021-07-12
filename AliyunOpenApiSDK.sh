@@ -7,7 +7,7 @@ for _command in openssl curl; do
         exit 127
     fi
 done
-unset $_command
+unset _command
 
 declare AliAccessKeyId AliAccessKeySecret
 _AliAccessKeyId=$AliAccessKeyId
