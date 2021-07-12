@@ -1,5 +1,4 @@
-#!/bin/false
-# shellcheck shell=bash
+#!/bin/bash
 
 for _command in openssl curl; do
     if ! command -v $_command &> /dev/null; then
@@ -26,7 +25,7 @@ aliapi_rpc() {
         return 62
     fi
 
-    if [[ $# -lt 6 ]];then
+    if ! [[ $# -eq 4 || $# -eq 6 ]];then
         echo "Aliyun OpenAPI SDK: aliapi_rpc() not enough parameters"
         return 66
     fi
@@ -106,3 +105,5 @@ _urlencode() {
     result=$(curl -G -s -o /dev/null -w "%{url_effective}" -m 1 --data-urlencode "=$1" http://127.0.0.1:99999)
     echo "${result#*\?}"
 }
+
+[[ $# -ne 0 ]] && aliapi_rpc "$@"
