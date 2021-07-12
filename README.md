@@ -22,9 +22,14 @@
 3. 调用 `aliapi_rpc` 函数
 
 函数签名：
+```bash
+# Output: JsonString
+# Retrun Code: 0 = HTTP_STATUS_CODE == 200 | 1 = HTTP_STATUS_CODE != 200
+aliapi_rpc <host> <http_method> <api_version> <api_action> [api_custom_key] [api_custom_value]
+# api_custom_key 和 api_custom_value 可以省略，但不允许只传递其中一个。
 ```
-aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_custom_value[]): JsonString
-```
+
+PS: `AliyunOpenApiSDK.sh` 支持独立执行，参数与函数参数一致。
 
 **示例：**
 
