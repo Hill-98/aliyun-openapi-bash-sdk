@@ -2,7 +2,8 @@
 
 这是一个非官方的阿里云 OpenAPI Shell SDK，方便 Shell 脚本调用阿里云 OpenAPI，SDK 主要实现了自动计算 OpenAPI 的请求签名。
 
-虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI，不过某些 API (比如 SSL 证书) 它并不支持，或者说还没来得及支持，而且对于存储空间有限的嵌入式设备，Shell SDK 明显是更好的选择。
+虽然阿里云官方有 [AliyunCLI](https://github.com/aliyun/aliyun-cli)，可以在 Shell 环境下使用阿里云 OpenAPI，但是并不支持某些 API (比如 SSL 证书)。  
+对于存储空间有限的嵌入式设备，Shell SDK 可能是更好的选择。
 
 理论上支持所有阿里云 RPC OpenAPI，暂不支持 RESTful OpenAPI，将来可能会支持。
 
@@ -30,7 +31,7 @@ aliapi_rpc(host, http_method, api_version, api_action, api_custom_key[], api_cus
 ```bash
 #!/usr/bin/env bash
 
-# 导出 AliAccessKeyId 和 AliAccessKeySecret
+# 设置 AliAccessKeyId 和 AliAccessKeySecret
 export AliAccessKeyId="<AliAccessKeyId>"
 export AliAccessKeySecret="<AliAccessKeySecret>"
 
