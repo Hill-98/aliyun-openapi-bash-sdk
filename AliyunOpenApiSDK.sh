@@ -12,7 +12,7 @@ declare AliAccessKeyId AliAccessKeySecret
 _AliAccessKeyId=$AliAccessKeyId
 _AliAccessKeySecret=$AliAccessKeySecret
 
-# aliapi_rpc <host> <http_method> <api_version> <api_action> <api_custom_key[]> <api_custom_value[]>
+# aliapi_rpc <host> <http_method> <api_version> <api_action> [api_custom_key] [api_custom_value]
 aliapi_rpc() {
     _AliAccessKeyId=$AliAccessKeyId
     _AliAccessKeySecret=$AliAccessKeySecret
