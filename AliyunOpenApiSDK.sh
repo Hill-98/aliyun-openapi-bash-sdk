@@ -99,6 +99,13 @@ _aliapi_timestamp_rpc() {
 }
 
 _aliapi_signature_nonce() {
+    local nonce=""
+    if [[ -f /proc/sys/kernel/random/uuid ]]; then
+        nonce=$(</proc/sys/kernel/random/uuid)
+    else
+        nonce=$(date "+%s%N")
+    fi
+    echo "$RANDOM${nonce//-/}$RANDOM"
 }
 
 _aliapi_urlencode() {
