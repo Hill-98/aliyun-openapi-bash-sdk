@@ -8,6 +8,8 @@ for _aliapi_command in openssl curl; do
 done
 unset _aliapi_command
 
+ALIYUN_SDK_LAST_HTTP_CODE=0
+
 # aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 aliapi_rpc() {
     _aliapi_check_vars || return $?
@@ -68,11 +70,11 @@ aliapi_rpc() {
     local _signature
     _signature=$(_aliapi_signature_rpc "$_http_method" "${_query_str:0:-1}")
     _query_str+="Signature=$(_aliapi_urlencode "$_signature")"
-    local _curl_out _http_code _http_url="https://$_http_host/?$_query_str"
+    local _curl_out _http_url="https://$_http_host/?$_query_str"
     _curl_out=$(mktemp)
-    _http_code=$(curl --location --silent --show-error --request "$_http_method" --output "$_curl_out" --write-out "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
+    ALIYUN_SDK_LAST_HTTP_CODE=$(curl --location --silent --show-error --request "$_http_method" --output "$_curl_out" --write-out "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
     rm -f "$_curl_out"
-    [[ $_http_code -eq 200 ]] && return 0 || return 1
+    [[ $ALIYUN_SDK_LAST_HTTP_CODE -eq 200 ]] && return 0 || return 1
 }
 
 _aliapi_check_vars() {

@@ -8,6 +8,7 @@
 
 ## 依赖
 
+* coreutils ()
 * curl
 * openssl
 
@@ -48,6 +49,7 @@ get_show_size() {
 # 解析参数时会执行函数 (所以 ShowSize 的值是 50)
 aliapi_rpc GET cas.aliyuncs.com 2018-07-13 DescribeUserCertificateList --CurrentPage 1 --ShowSize "get_show_size()"
 # $? == 0 代表 HTTP CODE == 200 反之 $? == 1
+# 可以通过 ALIYUN_SDK_HTTP_CODE 变量获取最后一次的 HTTP CODE
 # 只要 curl 的退出代码 == 0 就会返回接收到的数据
 if [[ $? -eq 0 ]]; then
     # 执行成功
