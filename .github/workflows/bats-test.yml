@@ -1,10 +1,13 @@
 name: Bats test
 on:
   push:
+    paths:
+      - AliyunOpenApiSDK.sh
+      - test.bats.sh
   pull_request:
     paths:
-      - 'AliyunOpenApiSDK.sh'
-      - 'test.bats.sh'
+      - AliyunOpenApiSDK.sh
+      - test.bats.sh
 
 jobs:
   test:
