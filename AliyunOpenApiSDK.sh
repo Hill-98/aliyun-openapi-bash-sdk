@@ -78,7 +78,7 @@ aliapi_rpc() {
     _query_str+="Signature=$(_urlencode "$_ali_signature_value")"
     local _curl_out _http_code _http_url="https://$_http_host/?$_query_str"
     _curl_out=$(mktemp)
-    _http_code=$(curl -L -s -S -X "$_http_method" -o "$_curl_out" -w "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
+    _http_code=$(curl --location --silent --show-error --request "$_http_method" --output "$_curl_out" --write-out "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
     rm -f "$_curl_out"
     [[ $_http_code -eq 200 ]] && return 0 || return 1
 }
@@ -102,7 +102,7 @@ _ali_signature_nonce() {
 
 _urlencode() {
     local result
-    result=$(curl -G -s -o /dev/null -w "%{url_effective}" -m 1 --data-urlencode "=$1" http://127.0.0.1:99999)
+    result=$(curl --get --silent --output /dev/null --write-out "%{url_effective}" --data-urlencode "=$1" "")
     echo "${result#*\?}"
 }
 
