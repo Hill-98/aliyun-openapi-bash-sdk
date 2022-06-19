@@ -1,12 +1,12 @@
 #!/bin/bash
 
-for _command in openssl curl; do
-    if ! command -v $_command &> /dev/null; then
-        echo "Aliyun OpenAPI SDK: $_command command not found"
+for _aliapi_command in openssl curl; do
+    if ! command -v $_aliapi_command &> /dev/null; then
+        echo "Aliyun OpenAPI SDK: $_aliapi_command command not found"
         exit 127
     fi
 done
-unset _command
+unset _aliapi_command
 
 # aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 aliapi_rpc() {
