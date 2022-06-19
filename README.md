@@ -13,7 +13,7 @@
 
 ## 使用
 
-1. 导出环境变量 `AliAccessKeyId` 和 `AliAccessKeySecret`
+1. 声明变量 `AliAccessKeyId` 和 `AliAccessKeySecret`
 2. 导入 `AliyunOpenApiSDK.sh`
 3. 调用 `aliapi_rpc` 函数
 
@@ -24,7 +24,7 @@
 aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 ```
 
-PS: `AliyunOpenApiSDK.sh` 支持作为脚本独立执行，脚本参数与函数参数一致。
+PS: `AliyunOpenApiSDK.sh` 支持作为脚本独立执行，脚本参数与函数参数一致，作为脚本运行时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要导出。
 
 **示例：**
 
@@ -32,8 +32,8 @@ PS: `AliyunOpenApiSDK.sh` 支持作为脚本独立执行，脚本参数与函数
 #!/usr/bin/env bash
 
 # 设置 AliAccessKeyId 和 AliAccessKeySecret
-export AliAccessKeyId="<AliAccessKeyId>"
-export AliAccessKeySecret="<AliAccessKeySecret>"
+AliAccessKeyId="<AliAccessKeyId>"
+AliAccessKeySecret="<AliAccessKeySecret>"
 
 # 导入 SDK
 source AliyunOpenApiSDK.sh
