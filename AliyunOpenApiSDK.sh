@@ -116,8 +116,18 @@ _aliapi_urlencode() {
 if [[ ${#BASH_SOURCE[@]} -eq 1 ]]; then
     set -euf -o pipefail
     if [[ $# -eq 0 ]]; then
-        echo "$0 <http_method> <host> <api_version> <api_action> [<--key> <value>...]" >&2
+        echo "$(basename "$0") <--rpc> <http_method> <host> <api_version> <api_action> [<--key> <value>...]" >&2
         exit 2
     fi
-    aliapi_rpc "$@"
+
+    case $1 in
+        --rpc)
+            shift
+            aliapi_rpc "$@"
+            ;;
+        *)
+            echo "Aliyun OpenAPI SDK: '$1' is unknown parameter" >&2
+            exit 2
+            ;;
+    esac
 fi

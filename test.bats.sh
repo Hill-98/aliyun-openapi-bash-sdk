@@ -99,3 +99,22 @@ test_rpc_api() { #@test
     run grep '"Key":"openapi-shell-sdk-test"' <<< "$output"
     [[ $status -eq 0 ]]
 }
+
+test_cli() { #@test
+    skip_no_aliaccess
+
+    export AliAccessKeyId AliAccessKeySecret
+
+    run ./AliyunOpenApiSDK.sh
+    [[ $status -eq 2 ]]
+    [[ $output == "AliyunOpenApiSDK.sh <--rpc> <http_method> <host> <api_version> <api_action> [<--key> <value>...]" ]]
+
+    run ./AliyunOpenApiSDK.sh --cpr
+    [[ $status -eq 2 ]]
+    [[ $output == "Aliyun OpenAPI SDK: '--cpr' is unknown parameter" ]]
+
+    run ./AliyunOpenApiSDK.sh --rpc GET sts.aliyuncs.com 2015-04-01 GetCallerIdentity
+    [[ $status -eq 0 ]]
+    run grep "user/aliyun-openapi-shell-sdk-test" <<< "$output"
+    [[ $status -eq 0 ]]
+}

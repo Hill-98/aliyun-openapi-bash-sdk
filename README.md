@@ -24,7 +24,7 @@
 aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 ```
 
-PS: `AliyunOpenApiSDK.sh` 支持作为脚本独立执行，脚本参数与函数参数一致，作为脚本运行时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要导出。
+PS: `AliyunOpenApiSDK.sh` 可以作为脚本执行，脚本第一个参数为 `--rpc`，剩余参数为 `aliapi_rpc` 可接受参数。作为脚本运行时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要导出。
 
 **示例：**
 
