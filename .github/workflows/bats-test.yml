@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
-      AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
     steps:
     - name: Setup BATS
       uses: mig4/setup-bats@v1
@@ -20,4 +17,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v3
     - name: Run test
+      env:
+        AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
+        AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
       run: bats test.bats.sh
