@@ -20,19 +20,13 @@ aliapi_rpc() {
         return 2
     fi
 
-    local _AliAccessKeyId=$AliAccessKeyId _AliAccessKeySecret=$AliAccessKeySecret
+    local -r _AliAccessKeyId=$AliAccessKeyId _AliAccessKeySecret=$AliAccessKeySecret
 
-    local _http_method=$1
-    # 兼容 BusyBox
-    # shellcheck disable=SC2018,SC2019
-    _http_method=$(tr "a-z" "A-Z" <<< "$_http_method")
-    shift
-    local _http_host=$1
-    shift
-    local _api_version=$1
-    shift
-    local _api_action=$1
-    shift
+    local -u _http_method=$1
+    local _http_host=$2
+    local _api_version=$3
+    local _api_action=$4
+    shift 4
 
     local -A _api_params
     _api_params=(
@@ -55,8 +49,7 @@ aliapi_rpc() {
                     return 2
                 fi
                 _api_params[${1:2}]="$2"
-                shift
-                shift
+                shift 2
                 ;;
             *)
                 echo "Aliyun OpenAPI SDK: aliapi_rpc() Unknown parameter: $1" >&2
@@ -86,7 +79,8 @@ aliapi_rpc() {
 }
 
 _aliapi_signature_rpc() {
-    local _http_method=$1 _str _query_str _sign_str
+    local -u _http_method=$1
+    local _str _query_str _sign_str
     _str=$(LC_ALL=C echo -n "$2" | tr "&" "\n" | sort)
     _query_str=$(echo -n "$_str" | tr "\n" "&")
     _sign_str="$_http_method&$(_aliapi_urlencode "/")&$(_aliapi_urlencode "$_query_str")"
