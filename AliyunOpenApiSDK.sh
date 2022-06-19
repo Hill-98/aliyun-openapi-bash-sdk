@@ -16,7 +16,7 @@ aliapi_rpc() {
     fi
 
     if [[ $# -lt 4 ]];then
-        echo "Aliyun OpenAPI SDK: aliapi_rpc() not enough parameters" >&2
+        echo "aliapi_rpc: not enough parameters" >&2
         return 2
     fi
 
@@ -45,14 +45,14 @@ aliapi_rpc() {
         case $1 in
             --*)
                 if [[ $# -le 1 ]]; then
-                    echo "Aliyun OpenAPI SDK: aliapi_rpc() '$1' has no value" >&2
+                    echo "aliapi_rpc: '$1' has no value" >&2
                     return 2
                 fi
                 _api_params[${1:2}]="$2"
                 shift 2
                 ;;
             *)
-                echo "Aliyun OpenAPI SDK: aliapi_rpc() Unknown parameter: $1" >&2
+                echo "aliapi_rpc: '$1' is unknown parameter" >&2
                 return 2
                 ;;
         esac
@@ -63,7 +63,7 @@ aliapi_rpc() {
     for _key in "${!_api_params[@]}"; do
         _value=${_api_params[$_key]}
         # 参数值如果是以 () 结束，代表需要执行函数获取值，如果函数不存在，使用原始值。
-        [[ ($_value =~ .+\(\)$ && $(type -t "${_value:0:-2}") == "function") ]] && _value=$(${_value:0:-2})
+        [[ $_value =~ .+\(\)$ && $(type -t "${_value:0:-2}") == "function" ]] && _value=$(${_value:0:-2})
         _value=$(_aliapi_urlencode "$_value")
         _query_str+="$_key=$_value&"
     done

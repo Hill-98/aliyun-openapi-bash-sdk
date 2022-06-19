@@ -46,7 +46,7 @@ test_urlencode() { #@test
     [[ $output == "new%0Aline%0Atest" ]]
 }
 
-test_api_rpc() { #@test
+test_rpc_api() { #@test
     if [[ ! -v AliAccessKeyId || ! -v AliAccessKeySecret ]]; then
         skip "'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found"
     fi
@@ -62,15 +62,15 @@ test_api_rpc() { #@test
 
     run aliapi_rpc GET api.test 0
     [[ $status -eq 2 ]]
-    [[ $output == "Aliyun OpenAPI SDK: aliapi_rpc() not enough parameters" ]]
+    [[ $output == "aliapi_rpc: not enough parameters" ]]
 
     run aliapi_rpc GET api.test 0 api unknown
     [[ $status -eq 2 ]]
-    [[ $output == "Aliyun OpenAPI SDK: aliapi_rpc() Unknown parameter: unknown" ]]
+    [[ $output == "aliapi_rpc: 'unknown' is unknown parameter" ]]
 
     run aliapi_rpc GET api.test 0 api --unknown
     [[ $status -eq 2 ]]
-    [[ $output == "Aliyun OpenAPI SDK: aliapi_rpc() '--unknown' has no value" ]]
+    [[ $output == "aliapi_rpc: '--unknown' has no value" ]]
 
     run aliapi_rpc GET sts.aliyuncs.com 2015-04-01 GetCallerIdentity
     [[ $status -eq 0 ]]
