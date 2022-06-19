@@ -63,7 +63,7 @@ aliapi_rpc() {
     for _key in "${!_api_params[@]}"; do
         _value=${_api_params[$_key]}
         # 参数值如果是以 () 结束，代表需要执行函数获取值，如果函数不存在，使用原始值。
-        [[ ($(grep -E "^.+\(\)$" <<< "$_value")  == "$_value" && $(type -t "${_value:0:-2}") == "function") ]] && _value=$(${_value:0:-2})
+        [[ ($_value =~ .+\(\)$ && $(type -t "${_value:0:-2}") == "function") ]] && _value=$(${_value:0:-2})
         _value=$(_aliapi_urlencode "$_value")
         _query_str+="$_key=$_value&"
     done
