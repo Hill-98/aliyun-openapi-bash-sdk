@@ -77,7 +77,11 @@ test_api_rpc() { #@test
     run grep "user/aliyun-openapi-shell-sdk-test" <<< "$output"
     [[ $status -eq 0 ]]
 
-    run aliapi_rpc GET tag.aliyuncs.com 2018-08-28 ListTagKeys --RegionId cn-hangzhou --QueryType MetaTag
+    getQueryType() {
+        echo MetaTag
+    }
+
+    run aliapi_rpc GET tag.aliyuncs.com 2018-08-28 ListTagKeys --RegionId cn-hangzhou --QueryType "getQueryType()"
     [[ $status -eq 0 ]]
     run grep '"Key":"openapi-shell-sdk-test"' <<< "$output"
     [[ $status -eq 0 ]]
