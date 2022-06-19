@@ -91,9 +91,9 @@ _ali_signature_rpc() {
     echo -n "$_sign_str" | openssl sha1 -hmac "$_AliAccessKeySecret&" -binary | openssl base64 -e
 }
 
-_ali_timestamp_rpc() {
+_aliapi_timestamp_rpc() {
     # ISO8601 UTC
-    date -u "+%FT%TZ"
+    date -u -Iseconds
 }
 
 _ali_signature_nonce() {
