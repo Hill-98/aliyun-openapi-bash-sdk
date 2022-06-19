@@ -66,7 +66,7 @@ aliapi_rpc() {
     done
 
     local _signature
-    _signature=$(_aliapi_signature_rpc "$_http_method" "$_query_str")
+    _signature=$(_aliapi_signature_rpc "$_http_method" "${_query_str:0:-1}")
     _query_str+="Signature=$(_aliapi_urlencode "$_signature")"
     local _curl_out _http_code _http_url="https://$_http_host/?$_query_str"
     _curl_out=$(mktemp)
@@ -84,9 +84,11 @@ _aliapi_check_vars() {
 
 _aliapi_signature_rpc() {
     local -u _http_method=$1
-    local _str _query_str _sign_str
-    _str=$(LC_ALL=C echo -n "$2" | tr "&" "\n" | sort)
-    _query_str=$(echo -n "$_str" | tr "\n" "&")
+    local _str=$2 _query_str _sign_str
+    local _newline='
+'
+    _str=$(LC_ALL=C sort <<< "${_str//&/$_newline}")
+    _query_str=${_str//$_newline/&}
     _sign_str="$_http_method&$(_aliapi_urlencode "/")&$(_aliapi_urlencode "$_query_str")"
     echo -n "$_sign_str" | openssl sha1 -hmac "$_AliAccessKeySecret&" -binary | openssl base64 -e
 }
