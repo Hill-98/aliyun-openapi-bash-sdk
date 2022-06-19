@@ -6,6 +6,12 @@ setup() {
     source AliyunOpenApiSDK.sh
 }
 
+skip_no_aliaccess() {
+    if [[ ! -v AliAccessKeyId || ! -v AliAccessKeySecret ]]; then
+        skip "'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found"
+    fi
+}
+
 test_signature_nonce() { #@test
     run _aliapi_signature_nonce
     nonceA=$output
@@ -46,19 +52,26 @@ test_urlencode() { #@test
     [[ $output == "new%0Aline%0Atest" ]]
 }
 
-test_rpc_api() { #@test
-    if [[ ! -v AliAccessKeyId || ! -v AliAccessKeySecret ]]; then
-        skip "'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found"
-    fi
+test_check_vars() { #@test
+    skip_no_aliaccess
 
     _AliAccessKeyId=$AliAccessKeyId
     _AliAccessKeySecret=$AliAccessKeySecret
     unset AliAccessKeyId AliAccessKeySecret
-    run aliapi_rpc
+
+    run _aliapi_check_vars
     [[ $status -eq 3 ]]
     [[ $output == "Aliyun OpenAPI SDK: 'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found" ]]
+
     AliAccessKeyId=$_AliAccessKeyId
     AliAccessKeySecret=$_AliAccessKeySecret
+
+    run _aliapi_check_vars
+    [[ $status -eq 0 ]]
+}
+
+test_rpc_api() { #@test
+    skip_no_aliaccess
 
     run aliapi_rpc GET api.test 0
     [[ $status -eq 2 ]]

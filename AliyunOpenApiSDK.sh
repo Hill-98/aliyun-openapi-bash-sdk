@@ -10,10 +10,7 @@ unset _aliapi_command
 
 # aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 aliapi_rpc() {
-    if [[ ! -v AliAccessKeyId || ! -v AliAccessKeySecret ]]; then
-        echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found" >&2
-        return 3
-    fi
+    _aliapi_check_vars || return $?
 
     if [[ $# -lt 4 ]];then
         echo "aliapi_rpc: not enough parameters" >&2
@@ -76,6 +73,13 @@ aliapi_rpc() {
     _http_code=$(curl --location --silent --show-error --request "$_http_method" --output "$_curl_out" --write-out "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
     rm -f "$_curl_out"
     [[ $_http_code -eq 200 ]] && return 0 || return 1
+}
+
+_aliapi_check_vars() {
+    if [[ ! -v AliAccessKeyId || ! -v AliAccessKeySecret ]]; then
+        echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found" >&2
+        return 3
+    fi
 }
 
 _aliapi_signature_rpc() {
