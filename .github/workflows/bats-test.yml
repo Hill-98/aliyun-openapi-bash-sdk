@@ -1,0 +1,23 @@
+name: Bats test
+on:
+  push:
+  pull_request:
+    paths:
+      - 'AliyunOpenApiSDK.sh'
+      - 'test.bats.sh'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
+      AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
+    steps:
+    - name: Setup BATS
+      uses: mig4/setup-bats@v1
+      with:
+        bats-version: 1.7.0
+    - name: Check out code
+      uses: actions/checkout@v3
+    - name: Run test
+      run: bats test.bats.sh
