@@ -7,8 +7,8 @@
 # 可配合 acme.sh 使用的 renewHook 脚本：自动将新证书上传至阿里云并更新对应 CDN 域名，然后删除对应域名的旧证书。
 # 每次 API 执行都会检测是否失败，如果失败，会中断脚本执行并返回自定义错误代码。
 
-export AliAccessKeyId="<AliAccessKeyId>"
-export AliAccessKeySecret="<AliAccessKeySecret>"
+AliAccessKeyId="<AliAccessKeyId>"
+AliAccessKeySecret="<AliAccessKeySecret>"
 # shellcheck disable=SC1091
 source ../AliyunOpenApiSDK.sh
 
