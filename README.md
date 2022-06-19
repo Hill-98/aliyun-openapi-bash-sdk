@@ -8,7 +8,6 @@
 
 ## 依赖
 
-* bash
 * curl
 * openssl
 
