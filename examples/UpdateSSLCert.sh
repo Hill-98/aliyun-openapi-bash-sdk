@@ -22,7 +22,7 @@ ACME_ENV_LIST=(
 )
 # 检查环境变量是否存在
 for value in "${ACME_ENV_LIST[@]}" ; do
-   declare -p "$value" &>/dev/null || exit 1
+   [[ ! -v "$value" ]] || exit 1
 done
 unset value
 
@@ -45,58 +45,22 @@ DOMAIN_LIST=(
     "example.example.com"
 )
 
-api_custom_key=(
-    "CurrentPage"
-    "ShowSize"
-)
-api_custom_value=(
-    "1"
-    "50"
-)
 # 获取证书列表
-result=$(aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DescribeUserCertificateList" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 101)
+result=$(aliapi_rpc GET cas.aliyuncs.com  2018-07-13 DescribeUserCertificateList --CurrentPage 1 --ShowSize 50)  || exit 101
 # 使用 jq 处理返回的 JSON 数据并提取出匹配当前证书域名的证书列表的 ID，用于稍后的删除旧证书操作。
 cert_list=$(jq -cr ".CertificateList|map(select(.common == \"$DOMAIN\"))|map(.id)|.[]" <<< "$result")
 
-api_custom_key=(
-    "Cert"
-    "Key"
-    "Name"
-)
-# 使用自定义函数获取证书和密钥，保证内容可以被完整的传递。
-api_custom_value=(
-    "get_cert()"
-    "get_key()"
-    "$CERT_NAME"
-)
 # 上传新的证书
-aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "CreateUserCertificate" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 102
+aliapi_rpc GET cas.aliyuncs.com 2018-07-13 CreateUserCertificate --Cert "get_cert()" --Key "get_key()" --Name "$CERT_NAME" || exit 102
+
 # 设置 CDN 域名列表使用新的证书
-for domain in "${DOMAIN_LIST[@]}"; do
-    api_custom_key=(
-        "DomainName"
-        "ServerCertificateStatus"
-        "CertName"
-        "CertType"
-    )
-    api_custom_value=(
-        "$domain"
-        "on"
-        "$CERT_NAME"
-        "cas"
-    )
-    aliapi_rpc "cdn.aliyuncs.com" "GET" "2018-05-10" "SetDomainServerCertificate" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 103
+for _domain in "${DOMAIN_LIST[@]}"; do
+    aliapi_rpc GET cdn.aliyuncs.com 2018-05-10 SetDomainServerCertificate --DomainName "$_domain" --ServerCertificateStatus on --CertName "$CERT_NAME" --CertType cas || exit 103
 done
-unset domain
+unset _domain
 
 # 删除旧的证书
-for id in ${cert_list}; do
-    api_custom_key=(
-        "CertId"
-    )
-    api_custom_value=(
-        "$id"
-    )
-    aliapi_rpc "cas.aliyuncs.com" "GET" "2018-07-13" "DeleteUserCertificate" "${api_custom_key[*]}" "${api_custom_value[*]}" || exit 104
+for _id in ${cert_list}; do
+    aliapi_rpc GET cas.aliyuncs.com 2018-07-13 DeleteUserCertificate --CertId "$_id" || exit 104
 done
-unset id
+unset _id
