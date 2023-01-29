@@ -1,6 +1,6 @@
 # Aliyun OpenAPI Bash SDK
 
-这是一个非官方的阿里云 OpenAPI Bash SDK，方便 Bash 脚本调用阿里云 OpenAPI，SDK 主要实现了自动计算 OpenAPI 的请求签名。
+这是一个非官方的阿里云 OpenAPI Bash SDK，用于 Bash 脚本调用阿里云 OpenAPI，相比于 [aliyun-cli](https://github.com/aliyun/aliyun-cli) 更加轻量，更适合小存储设备。
 
 理论上支持所有阿里云 RPC OpenAPI，暂不支持 RESTful OpenAPI，将来可能会支持。
 
@@ -8,9 +8,9 @@
 
 ## 依赖
 
-* coreutils (`date`)
-* curl
-* openssl
+* coreutils (`date`) # 获取时间戳
+* curl # 网络请求
+* openssl # 计算 HAMC-SHA1 签名
 
 ## 使用
 
@@ -25,7 +25,7 @@
 aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 ```
 
-PS: `AliyunOpenApiSDK.sh` 可以作为脚本执行，脚本第一个参数为 `--rpc`，剩余参数为 `aliapi_rpc` 可接受参数。作为脚本运行时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要导出。
+`AliyunOpenApiSDK.sh` 可以作为脚本执行，脚本第一个参数为 `--rpc`，剩余参数为 `aliapi_rpc` 可接受参数。作为脚本运行时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要 `export`。
 
 **示例：**
 
@@ -49,8 +49,7 @@ get_show_size() {
 # 解析参数时会执行函数 (所以 ShowSize 的值是 50)
 aliapi_rpc GET cas.aliyuncs.com 2018-07-13 DescribeUserCertificateList --CurrentPage 1 --ShowSize "get_show_size()"
 # $? == 0 代表 HTTP CODE == 200 反之 $? == 1
-# 可以通过 ALIYUN_SDK_LAST_HTTP_CODE 变量获取最后一次的 HTTP CODE
-# 只要 curl 的退出代码 == 0 就会返回接收到的数据
+# 可以使用 ALIYUN_SDK_LAST_HTTP_CODE 变量获取最后一次的 HTTP CODE
 if [[ $? -eq 0 ]]; then
     # 执行成功
 else
