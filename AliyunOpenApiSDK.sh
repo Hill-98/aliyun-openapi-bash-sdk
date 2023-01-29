@@ -59,9 +59,9 @@ aliapi_rpc() {
     _signature=$(_aliapi_signature_rpc "$_http_method" "${_query_str:0:-1}")
     _query_str+="Signature=$(_aliapi_urlencode "$_signature")"
     local _curl_out _http_url="https://$_http_host/?$_query_str"
-    _curl_out=$(mktemp)
-    ALIYUN_SDK_LAST_HTTP_CODE=$(curl --location --silent --show-error --request "$_http_method" --output "$_curl_out" --write-out "%{http_code}" --connect-timeout 3 "$_http_url") && cat "$_curl_out" - <<< ""
-    rm -f "$_curl_out"
+    _curl_out=$(curl --location --silent --show-error --request "$_http_method" --write-out "%{http_code}" --connect-timeout 3 "$_http_url")
+    printf "%s" "${_curl_out:0:-3}"
+    ALIYUN_SDK_LAST_HTTP_CODE=${_curl_out:${#_curl_out}-3}
     [[ $ALIYUN_SDK_LAST_HTTP_CODE -eq 200 ]] && return 0 || return 1
 }
 

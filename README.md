@@ -8,7 +8,7 @@
 
 ## 依赖
 
-* coreutils (`cat`, `date`, `mktemp`, `rm`)
+* coreutils (`date`)
 * curl
 * openssl
 
