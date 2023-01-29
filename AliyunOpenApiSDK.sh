@@ -92,7 +92,7 @@ _aliapi_signature_rpc() {
     _str=$(LC_ALL=C sort <<< "${_str//&/$_newline}")
     _query_str=${_str//$_newline/&}
     _sign_str="$_http_method&$(_aliapi_urlencode "/")&$(_aliapi_urlencode "$_query_str")"
-    echo -n "$_sign_str" | openssl sha1 -hmac "$_AliAccessKeySecret&" -binary | openssl base64 -e
+    printf "%s" "$_sign_str" | openssl dgst -sha1 -hmac "$_AliAccessKeySecret&" -binary | openssl base64 -e
 }
 
 _aliapi_timestamp_rpc() {
