@@ -117,4 +117,9 @@ test_cli() { #@test
     [[ $status -eq 0 ]]
     run grep "user/aliyun-openapi-shell-sdk-test" <<< "$output"
     [[ $status -eq 0 ]]
+
+    run ./AliyunOpenApiSDK.sh --rpc GET tag.aliyuncs.com 2018-08-28 ListTagKeys --RegionId cn-hangzhou --QueryType MetaTag
+    [[ $status -eq 0 ]]
+    run grep '"Key":"openapi-shell-sdk-test"' <<< "$output"
+    [[ $status -eq 0 ]]
 }
