@@ -27,18 +27,12 @@ aliapi_rpc() {
     local _api_action=$4
     shift 4
 
-    local -A _api_params
-    _api_params=(
-        ["AccessKeyId"]=$_AliAccessKeyId
-        ["Action"]=$_api_action
-        ["Format"]="JSON"
-        ["SignatureMethod"]="HMAC-SHA1"
-        ["SignatureVersion"]="1.0"
-        ["SignatureNonce"]=$(_aliapi_signature_nonce)
-        ["Timestamp"]=$(_aliapi_timestamp_rpc)
-        ["Version"]=$_api_version
-    )
+    local _query_str _signature_nonce _timestamp
+    _signature_nonce=$(_aliapi_urlencode "$(_aliapi_signature_nonce)")
+    _timestamp=$(_aliapi_urlencode "$(_aliapi_timestamp_rpc)")
+    _query_str="AccessKeyId=$_AliAccessKeyId&Action=$_api_action&Format=JSON&SignatureMethod=HMAC-SHA1&SignatureVersion=1.0&SignatureNonce=$_signature_nonce&Timestamp=$_timestamp&Version=$_api_version&"
     # 解析其余参数
+    local _key _value
     while [[ $# -ne 0 ]]
     do
         case $1 in
@@ -47,7 +41,11 @@ aliapi_rpc() {
                     echo "aliapi_rpc: '$1' has no value" >&2
                     return 2
                 fi
-                _api_params[${1:2}]="$2"
+                _key=${1:2}
+                _value=$2
+                [[ $_value =~ .+\(\)$ && $(type -t "${_value:0:-2}") == "function" ]] && _value=$(${_value:0:-2})
+                _value=$(_aliapi_urlencode "$_value")
+                _query_str+="$_key=$_value&"
                 shift 2
                 ;;
             *)
@@ -55,16 +53,6 @@ aliapi_rpc() {
                 return 2
                 ;;
         esac
-    done
-
-    local _query_str=""
-    local _key _value
-    for _key in "${!_api_params[@]}"; do
-        _value=${_api_params[$_key]}
-        # 参数值如果是以 () 结束，代表需要执行函数获取值，如果函数不存在，使用原始值。
-        [[ $_value =~ .+\(\)$ && $(type -t "${_value:0:-2}") == "function" ]] && _value=$(${_value:0:-2})
-        _value=$(_aliapi_urlencode "$_value")
-        _query_str+="$_key=$_value&"
     done
 
     local _signature
