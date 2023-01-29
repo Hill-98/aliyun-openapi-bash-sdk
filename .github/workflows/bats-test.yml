@@ -15,12 +15,12 @@ jobs:
     container:
       image: alpine:latest
     steps:
+      - name: Install dependencies
+        run: apk add bash curl git openssl
       - name: Check out code
         uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Install dependencies
-        run: apk add bash curl openssl
       - name: Run test
         env:
           AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
