@@ -111,10 +111,20 @@ _aliapi_signature_nonce() {
 }
 
 _aliapi_urlencode() {
-    local result
-    result=$(curl --get --silent --output /dev/null --write-out "%{url_effective}" --data-urlencode "=$1" "")
-    result="${result//+/%20}" # 替换 + 为 %20
-    echo "${result#*\?}"
+    if [[ ${LC_ALL:-X} != C ]]; then
+        LC_ALL=C _aliapi_urlencode "$@"
+        return $?
+    fi
+    local char string=$1
+    while [[ -n $string ]]; do
+        char=${string:0:1}
+        string=${string:1}
+        case $char in
+            [-._~0-9A-Za-z]) printf %c "$char";;
+            *) printf %%%02X "'$char";;
+        esac
+    done
+    echo
 }
 
 if [[ ${#BASH_SOURCE[@]} -eq 1 ]]; then
