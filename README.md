@@ -1,5 +1,7 @@
 # Aliyun OpenAPI Bash SDK
 
+[![Bats test](https://github.com/Hill-98/aliyun-openapi-bash-sdk/actions/workflows/bats-test.yml/badge.svg)](https://github.com/Hill-98/aliyun-openapi-bash-sdk/actions/workflows/bats-test.yml)
+
 这是一个非官方的阿里云 OpenAPI Bash SDK，用于 Bash 脚本调用阿里云 OpenAPI，相比于 [aliyun-cli](https://github.com/aliyun/aliyun-cli) 更加轻量，更适合小存储设备。
 
 理论上支持所有阿里云 RPC OpenAPI，暂不支持 RESTful OpenAPI，将来可能会支持。

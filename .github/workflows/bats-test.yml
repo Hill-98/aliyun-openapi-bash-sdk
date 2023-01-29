@@ -2,12 +2,14 @@ name: Bats test
 on:
   push:
     paths:
-      - AliyunOpenApiSDK.sh
-      - test/test.bats.sh
+      - '.github/workflows/*.yml'
+      - '*.sh'
+      - 'test/*.sh'
   pull_request:
     paths:
-      - AliyunOpenApiSDK.sh
-      - test/test.bats.sh
+      - '.github/workflows/*.yml'
+      - '*.sh'
+      - 'test/*.sh'
 
 jobs:
   test-on-alpine:
