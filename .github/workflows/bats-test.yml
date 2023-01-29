@@ -3,24 +3,22 @@ on:
   push:
     paths:
       - AliyunOpenApiSDK.sh
-      - test.bats.sh
+      - test/test.bats.sh
   pull_request:
     paths:
       - AliyunOpenApiSDK.sh
-      - test.bats.sh
+      - test/test.bats.sh
 
 jobs:
   test:
     runs-on: ubuntu-18.04 # Test on old version bash
     steps:
-    - name: Setup BATS
-      uses: mig4/setup-bats@v1
-      with:
-        bats-version: 1.8.2
     - name: Check out code
       uses: actions/checkout@v3
+        with:
+          submodules: true
     - name: Run test
       env:
         AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
         AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
-      run: bats test.bats.sh
+        run: ./test/bats/bin/bats test/test.bats.sh
