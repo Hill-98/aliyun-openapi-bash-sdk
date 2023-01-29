@@ -4,3 +4,4 @@
 .env.dev
 .env.local
 .env.test
+.secrets

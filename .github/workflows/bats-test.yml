@@ -10,15 +10,62 @@ on:
       - test/test.bats.sh
 
 jobs:
-  test:
-    runs-on: ubuntu-18.04 # Test on old version bash
+  test-on-alpine:
+    runs-on: ubuntu-latest
+    container:
+      image: alpine:latest
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
         with:
           submodules: true
-    - name: Run test
-      env:
-        AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
-        AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
+      - name: Install dependencies
+        run: apk add bash curl openssl
+      - name: Run test
+        env:
+          AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
+          AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
+        run: ./test/bats/bin/bats test/test.bats.sh
+
+  test-on-openwrt:
+    runs-on: ubuntu-latest
+    container:
+      image: openwrtorg/rootfs:x86-64-openwrt-22.03
+    steps:
+      - name: Fix var directory
+        run: mkdir -p /var/lock
+      - name: Install dependencies
+        run: |
+          opkg update
+          opkg install git git-http
+          opkg install bash curl openssl-util
+          # Bats dependencies
+          opkg install coreutils-nl
+      - name: Check out code
+        if: ${{ github.event.act }}
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Check out code (with git)
+        if: ${{ !github.event.act }}
+        run: git clone --depth 1 --no-tags --recurse-submodules https://github.com/${{ github.repository }}.git /tmp/${{ github.sha }}
+      - name: Run test
+        env:
+          AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
+          AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
+        run: |
+          [[ -d /tmp/${{ github.sha }} ]] && cd /tmp/${{ github.sha }}
+          ./test/bats/bin/bats test/test.bats.sh
+
+  test-on-ubuntu:
+    runs-on: ubuntu-18.04 # Test on old version bash
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Run test
+        env:
+          AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
+          AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
         run: ./test/bats/bin/bats test/test.bats.sh

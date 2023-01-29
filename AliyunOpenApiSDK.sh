@@ -8,6 +8,8 @@ for _aliapi_command in openssl curl; do
 done
 unset _aliapi_command
 
+_ALIYUN_SDK_RUN_ON_MUSL_LIBC=$(ldd "$SHELL" | grep -q /lib/ld-musl && echo 1 || echo 0)
+
 ALIYUN_SDK_LAST_HTTP_CODE=0
 
 # aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
@@ -73,12 +75,17 @@ _aliapi_check_vars() {
 }
 
 _aliapi_signature_rpc() {
+    if [[ ${LC_ALL:-X} != C ]]; then
+        LC_ALL=C _aliapi_signature_rpc "$@"
+        return $?
+    fi
+
     local -u _http_method=$1
     local _str=$2 _query_str _sign_str
     local _newline='
 '
-    _str=$(LC_ALL=C sort <<< "${_str//&/$_newline}")
-    _query_str=${_str//$_newline/&}
+    _str=$(sort <<< "${_str//"&"/"$_newline"}")
+    _query_str=${_str//"$_newline"/"&"}
     _sign_str="$_http_method&$(_aliapi_urlencode "/")&$(_aliapi_urlencode "$_query_str")"
     printf "%s" "$_sign_str" | openssl dgst -sha1 -hmac "$_AliAccessKeySecret&" -binary | openssl base64 -e
 }
@@ -103,13 +110,21 @@ _aliapi_urlencode() {
         LC_ALL=C _aliapi_urlencode "$@"
         return $?
     fi
-    local char string=$1
+    local char hex string=$1
     while [[ -n $string ]]; do
         char=${string:0:1}
         string=${string:1}
         case $char in
             [-._~0-9A-Za-z]) printf %c "$char";;
-            *) printf %%%02X "'$char";;
+            *)
+                if [[ _ALIYUN_SDK_RUN_ON_MUSL_LIBC -eq 1 ]]; then
+                    # Hack musl libc for not ASCII chars (incomplete test)
+                    hex=$(printf %02X "'$char")
+                    printf %%%s "${hex:${#hex}-2}"
+                else
+                    printf %%%02X "'$char"
+                fi
+            ;;
         esac
     done
     echo
