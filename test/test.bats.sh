@@ -2,6 +2,7 @@
 # shellcheck shell=bash disable=SC2154
 
 setup() {
+    # shellcheck disable=SC1091
     [[ -f .env.test ]] && source .env.test
     source AliyunOpenApiSDK.sh
 }
@@ -69,6 +70,10 @@ test_check_vars() { #@test
     [[ $status -eq 0 ]]
 }
 
+getQueryType() {
+    echo MetaTag
+}
+
 test_rpc_api() { #@test
     skip_no_aliaccess
 
@@ -88,10 +93,6 @@ test_rpc_api() { #@test
     [[ $status -eq 0 ]]
     run grep "user/aliyun-openapi-shell-sdk-test" <<< "$output"
     [[ $status -eq 0 ]]
-
-    getQueryType() {
-        echo MetaTag
-    }
 
     run aliapi_rpc GET tag.aliyuncs.com 2018-08-28 ListTagKeys --RegionId cn-hangzhou --QueryType "getQueryType()"
     [[ $status -eq 0 ]]

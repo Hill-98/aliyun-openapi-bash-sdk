@@ -62,7 +62,7 @@ aliapi_rpc() {
     _query_str+="Signature=$(_aliapi_urlencode "$_signature")"
     local _curl_out _http_url="https://$_http_host/?$_query_str"
     _curl_out=$(curl --location --silent --show-error --request "$_http_method" --write-out "%{http_code}" --connect-timeout 3 "$_http_url")
-    printf "%s" "${_curl_out:0:-3}"
+    printf %s "${_curl_out:0:-3}"
     ALIYUN_SDK_LAST_HTTP_CODE=${_curl_out:${#_curl_out}-3}
     [[ $ALIYUN_SDK_LAST_HTTP_CODE -eq 200 ]] && return 0 || return 1
 }
@@ -82,8 +82,8 @@ _aliapi_signature_rpc() {
 
     local -u _http_method=$1
     local _str=$2 _query_str _sign_str
-    local _newline='
-'
+    local _newline="
+"
     _str=$(sort <<< "${_str//"&"/"$_newline"}")
     _query_str=${_str//"$_newline"/"&"}
     _sign_str="$_http_method&$(_aliapi_urlencode "/")&$(_aliapi_urlencode "$_query_str")"
@@ -100,7 +100,7 @@ _aliapi_signature_nonce() {
     if [[ -f /proc/sys/kernel/random/uuid ]]; then
         nonce=$(</proc/sys/kernel/random/uuid)
     else
-        nonce=$(date "+%s%N")
+        nonce=$(date +%s%N)
     fi
     echo "$RANDOM${nonce//-/}$RANDOM"
 }
@@ -117,12 +117,12 @@ _aliapi_urlencode() {
         case $char in
             [-._~0-9A-Za-z]) printf %c "$char";;
             *)
-                if [[ _ALIYUN_SDK_RUN_ON_MUSL_LIBC -eq 1 ]]; then
+                if [[ ALIYUN_SDK_RUN_ON_MUSL_LIBC -eq 0 ]]; then
+                    printf %%%02X "'$char"
+                else
                     # Hack musl libc for not ASCII chars (incomplete test)
                     hex=$(printf %02X "'$char")
                     printf %%%s "${hex:${#hex}-2}"
-                else
-                    printf %%%02X "'$char"
                 fi
             ;;
         esac

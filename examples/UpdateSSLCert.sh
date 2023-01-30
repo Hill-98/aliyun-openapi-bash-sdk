@@ -9,7 +9,7 @@
 
 AliAccessKeyId="<AliAccessKeyId>"
 AliAccessKeySecret="<AliAccessKeySecret>"
-# shellcheck disable=SC1091
+# shellcheck source=AliyunOpenApiSDK.sh
 source ../AliyunOpenApiSDK.sh
 
 # acme.sh 执行 renewHook 时导出的环境变量列表
