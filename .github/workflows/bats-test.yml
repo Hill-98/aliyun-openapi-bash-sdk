@@ -35,7 +35,7 @@ jobs:
       image: archlinux:latest
     steps:
       - name: Install dependencies
-        run: pacman -Syu bash curl openssl
+        run: yes | pacman -Syu bash curl openssl
       - name: Check out code
         uses: actions/checkout@v3
         with:
