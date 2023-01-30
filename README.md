@@ -14,6 +14,14 @@
 * curl # 网络请求
 * openssl # 计算 HAMC-SHA1 签名
 
+### 可选依赖
+
+* ldd # 检查当前 Shell 是否使用 musl libc
+* coreutils (`grep`) # 检查当前 Shell 是否使用 musl libc
+
+> 由于 glibc 和 musl libc 之间的差异，SDK 内部针对这两个不同的库做了些处理，SDK 导入时会使用 ldd 对当前 Shell 进行检查，判断是否使用了 musl libc。  
+> 如果需要跳过检查，可以在导入 SDK 之前设置 `ALIYUN_SDK_RUN_ON_MUSL_LIBC` 变量，`1` 表示使用了 musl libc，`0` 表示没有使用。
+
 ## 使用
 
 1. 声明变量 `AliAccessKeyId` 和 `AliAccessKeySecret`

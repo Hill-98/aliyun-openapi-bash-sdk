@@ -8,7 +8,7 @@ for _aliapi_command in openssl curl; do
 done
 unset _aliapi_command
 
-_ALIYUN_SDK_RUN_ON_MUSL_LIBC=$(ldd "$SHELL" | grep -q /lib/ld-musl && echo 1 || echo 0)
+[[ -v ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] || ALIYUN_SDK_RUN_ON_MUSL_LIBC=$(ldd "$SHELL" | grep -q /lib/ld-musl && echo 1 || echo 0)
 
 ALIYUN_SDK_LAST_HTTP_CODE=0
 
