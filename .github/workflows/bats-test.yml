@@ -61,7 +61,7 @@ jobs:
   test-on-openwrt:
     runs-on: ubuntu-latest
     container:
-      image: openwrtorg/rootfs:x86-64-openwrt-22.03
+      image: openwrt/rootfs:x86-64-openwrt-22.03
     steps:
       - name: Fix var directory
         run: mkdir -p /var/lock
