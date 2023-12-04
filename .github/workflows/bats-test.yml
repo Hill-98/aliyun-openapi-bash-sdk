@@ -15,10 +15,16 @@ jobs:
   test-on-alpine:
     runs-on: ubuntu-latest
     container:
-      image: alpine:latest
+      image: alpine:latest # Test on musl libc
     steps:
       - name: Install dependencies
         run: apk add bash curl git openssl
+      - name: Bash version
+        run: bash --version
+      - name: CURL version
+        run: curl --version
+      - name: OpenSSL version
+        run: openssl version
       - name: Check out code
         uses: actions/checkout@v3
         with:
@@ -30,12 +36,18 @@ jobs:
         run: ./test/bats/bin/bats test/test.bats.sh
 
   test-on-archlinux:
-    runs-on: ubuntu-latest # Test on latest version bash curl openssl
+    runs-on: ubuntu-latest
     container:
-      image: archlinux:latest
+      image: archlinux:latest # Test on latest version of bash curl openssl
     steps:
       - name: Install dependencies
         run: yes | pacman -Syu bash curl git openssl
+      - name: Bash version
+        run: bash --version
+      - name: CURL version
+        run: curl --version
+      - name: OpenSSL version
+        run: openssl version
       - name: Check out code
         uses: actions/checkout@v3
         with:
@@ -60,6 +72,12 @@ jobs:
           opkg install bash curl openssl-util
           # Bats dependencies
           opkg install coreutils-nl
+      - name: Bash version
+        run: bash --version
+      - name: CURL version
+        run: curl --version
+      - name: OpenSSL version
+        run: openssl version
       - name: Check out code
         if: ${{ github.event.act }}
         uses: actions/checkout@v3
@@ -77,8 +95,14 @@ jobs:
           ./test/bats/bin/bats test/test.bats.sh
 
   test-on-ubuntu:
-    runs-on: ubuntu-18.04 # Test on old version bash curl openssl
+    runs-on: ubuntu-18.04 # Test on old version of bash curl openssl
     steps:
+      - name: Bash version
+        run: bash --version
+      - name: CURL version
+        run: curl --version
+      - name: OpenSSL version
+        run: openssl version
       - name: Check out code
         uses: actions/checkout@v3
         with:
