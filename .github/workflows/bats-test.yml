@@ -85,7 +85,7 @@ jobs:
           submodules: true
       - name: Check out code (with git)
         if: ${{ !github.event.act }}
-        run: git clone --depth 1 --no-tags --recurse-submodules https://github.com/${{ github.repository }}.git /tmp/${{ github.sha }}
+        run: git clone --depth 1 --recurse-submodules https://github.com/${{ github.repository }}.git /tmp/${{ github.sha }}
       - name: Run test
         env:
           AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
@@ -94,9 +94,13 @@ jobs:
           [[ -d /tmp/${{ github.sha }} ]] && cd /tmp/${{ github.sha }}
           ./test/bats/bin/bats test/test.bats.sh
 
-  test-on-ubuntu:
-    runs-on: ubuntu-18.04 # Test on old version of bash curl openssl
+  test-on-ubuntu-20_04:
+    runs-on: ubuntu-20.04
     steps:
+      - name: Update package
+        run: apt update -y && apt upgrade -y
+      - name: Install dependencies
+        run: apt install -y bash curl git openssl
       - name: Bash version
         run: bash --version
       - name: CURL version
