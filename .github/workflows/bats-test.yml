@@ -98,9 +98,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Update package
-        run: apt update -y && apt upgrade -y
+        run: sudo apt update -y && sudo apt upgrade -y
       - name: Install dependencies
-        run: apt install -y bash curl git openssl
+        run: sudo apt install -y bash curl git openssl
       - name: Bash version
         run: bash --version
       - name: CURL version
