@@ -2,7 +2,7 @@
 
 [![Bats test](https://github.com/Hill-98/aliyun-openapi-bash-sdk/actions/workflows/bats-test.yml/badge.svg)](https://github.com/Hill-98/aliyun-openapi-bash-sdk/actions/workflows/bats-test.yml)
 
-这是一个非官方的阿里云 OpenAPI Bash SDK，用于 Bash 脚本调用阿里云 OpenAPI，相比于 [aliyun-cli](https://github.com/aliyun/aliyun-cli) 更加轻量，更适合小存储设备。
+这是一个非官方的阿里云 OpenAPI Bash SDK，用于 Bash 脚本调用阿里云 OpenAPI，相较于 [aliyun-cli](https://github.com/aliyun/aliyun-cli) 更加轻量，适合小存储设备。
 
 理论上支持所有阿里云 RPC OpenAPI，暂不支持 RESTful OpenAPI，将来可能会支持。
 
@@ -35,7 +35,7 @@
 aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 ```
 
-`AliyunOpenApiSDK.sh` 可以作为脚本执行，脚本第一个参数为 `--rpc`，剩余参数为 `aliapi_rpc` 可接受参数。作为脚本运行时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要导出。
+`AliyunOpenApiSDK.sh` 可以作为脚本使用，脚本第一个参数为 `--rpc`，剩余参数为 `aliapi_rpc` 可接受参数。作为脚本使用时，`AliAccessKeyId` 和 `AliAccessKeySecret` 变量需要 `export`。
 
 **示例：**
 
@@ -54,7 +54,8 @@ get_show_size() {
 }
 
 # 获取 SSL 证书列表：https://help.aliyun.com/document_detail/126511.html
-# 如果值以 () 结尾，那么 SDK 会假设它是一个函数，获取值时会判断函数是否存在并执行，如果不存在则使用原始值，所以这里 ShowSize 的值是 50。
+# 如果值以 () 结尾，那么 SDK 会假设它是一个函数，获取值时会判断函数是否存在并执行。
+# 如果不存在则使用原始值，所以这里 ShowSize 的值是 50。
 aliapi_rpc GET cas.aliyuncs.com 2018-07-13 DescribeUserCertificateList --CurrentPage 1 --ShowSize "get_show_size()"
 # 如果 HTTP 状态码是 200，那么返回代码是 0，否则返回代码为 1。
 # 使用 ALIYUN_SDK_LAST_HTTP_CODE 变量可以获取最后一次调用的 HTTP 状态码。
