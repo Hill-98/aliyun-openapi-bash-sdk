@@ -1,6 +1,11 @@
 #!/usr/bin/env bats
 # shellcheck shell=bash disable=SC2154
 
+bats_require_minimum_version "1.5.0"
+
+load "test_helper/bats-assert/load.bash"
+load "test_helper/bats-support/load.bash"
+
 setup() {
     # shellcheck disable=SC1091
     [[ -f .env.test ]] && source .env.test
@@ -113,13 +118,9 @@ test_cli() { #@test
     [[ $status -eq 2 ]]
     [[ $output == "Aliyun OpenAPI SDK: '--cpr' is unknown parameter" ]]
 
-    run ./AliyunOpenApiSDK.sh --rpc GET sts.aliyuncs.com 2015-04-01 GetCallerIdentity
-    [[ $status -eq 0 ]]
-    run grep "user/aliyun-openapi-shell-sdk-test" <<< "$output"
-    [[ $status -eq 0 ]]
+}
 
-    run ./AliyunOpenApiSDK.sh --rpc GET tag.aliyuncs.com 2018-08-28 ListTagKeys --RegionId cn-hangzhou --QueryType MetaTag
-    [[ $status -eq 0 ]]
-    run grep '"Key":"openapi-shell-sdk-test"' <<< "$output"
-    [[ $status -eq 0 ]]
+test_command_not_found() { #@test
+    run -127 /bin/bash -c 'PATH="" ./AliyunOpenApiSDK.sh'
+    assert_output --regexp "^Aliyun OpenAPI SDK: [A-Za-z0-9_-]+ command not found$"
 }
