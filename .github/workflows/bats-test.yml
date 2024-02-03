@@ -26,7 +26,7 @@ jobs:
       - name: OpenSSL version
         run: openssl version
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Run test
@@ -41,7 +41,7 @@ jobs:
       image: archlinux:latest # Test on latest version of bash curl openssl
     steps:
       - name: Install dependencies
-        run: yes | pacman -Syu bash curl git openssl
+        run: yes | pacman -Syu --noconfirm bash curl git openssl
       - name: Bash version
         run: bash --version
       - name: CURL version
@@ -49,7 +49,7 @@ jobs:
       - name: OpenSSL version
         run: openssl version
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Run test
@@ -80,7 +80,7 @@ jobs:
         run: openssl version
       - name: Check out code
         if: ${{ github.event.act }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Check out code (with git)
@@ -108,7 +108,7 @@ jobs:
       - name: OpenSSL version
         run: openssl version
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - name: Run test
