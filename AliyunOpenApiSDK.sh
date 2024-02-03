@@ -2,7 +2,7 @@
 
 for _aliapi_command in openssl curl; do
     if ! command -v $_aliapi_command &> /dev/null; then
-        echo "Aliyun OpenAPI SDK: $_aliapi_command command not found"
+        echo "Aliyun OpenAPI SDK: $_aliapi_command command not found" >&2
         exit 127
     fi
 done
