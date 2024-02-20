@@ -22,7 +22,7 @@ ACME_ENV_LIST=(
 )
 # 检查环境变量是否存在
 for value in "${ACME_ENV_LIST[@]}" ; do
-   [[ ! -v "$value" ]] || exit 1
+   [[ -v "$value" ]] || exit 1
 done
 unset value
 
