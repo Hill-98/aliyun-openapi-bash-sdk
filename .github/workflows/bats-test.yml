@@ -93,3 +93,26 @@ jobs:
         run: |
           [[ -d /tmp/${{ github.sha }} ]] && cd /tmp/${{ github.sha }}
           ./test/bats/bin/bats test/test.bats.sh
+
+  test-on-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update package
+        run: sudo apt update -y && sudo apt upgrade -y
+      - name: Install dependencies
+        run: sudo apt install -y bash curl git openssl
+      - name: Bash version
+        run: bash --version
+      - name: CURL version
+        run: curl --version
+      - name: OpenSSL version
+        run: openssl version
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Run test
+        env:
+          AliAccessKeyId: ${{ secrets.ALIACCESSKEYID }}
+          AliAccessKeySecret: ${{ secrets.ALIACCESSKEYSECRET }}
+        run: ./test/bats/bin/bats test/test.bats.sh
