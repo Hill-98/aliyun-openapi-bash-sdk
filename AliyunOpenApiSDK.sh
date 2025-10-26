@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 for _aliapi_command in openssl curl; do
     if ! command -v $_aliapi_command &> /dev/null; then
