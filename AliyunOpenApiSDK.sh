@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for _aliapi_command in openssl curl; do
     if ! command -v $_aliapi_command &> /dev/null; then
@@ -8,7 +8,13 @@ for _aliapi_command in openssl curl; do
 done
 unset _aliapi_command
 
-[[ -v ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] || ALIYUN_SDK_RUN_ON_MUSL_LIBC=$(ldd "$SHELL" | grep -q /lib/ld-musl && echo 1 || echo 0)
+if [[ -z $ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] && command -v ldd; then
+    if [[ $(ldd "$SHELL") == *"ld-musl"* ]]; then
+        ALIYUN_SDK_RUN_ON_MUSL_LIBC=1
+    else
+        ALIYUN_SDK_RUN_ON_MUSL_LIBC=0
+    fi
+fi
 
 ALIYUN_SDK_LAST_HTTP_CODE=0
 
@@ -68,7 +74,7 @@ aliapi_rpc() {
 }
 
 _aliapi_check_vars() {
-    if [[ ! -v AliAccessKeyId || ! -v AliAccessKeySecret ]]; then
+    if [[ -z ${AliAccessKeyId:-} || -z ${AliAccessKeySecret:-X} ]]; then
         echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found" >&2
         return 3
     fi

@@ -17,7 +17,6 @@
 ### 可选依赖
 
 * ldd # 检查当前 Shell 是否使用 musl libc
-* coreutils (`grep`) # 检查当前 Shell 是否使用 musl libc
 
 > 由于 glibc 和 musl libc 之间的差异，SDK 内部针对这两个不同的库做了些处理，初始化时使用 ldd 检查当前 Shell 是否使用了 musl libc。  
 > 如果需要跳过检查，可以在导入之前设置变量: `ALIYUN_SDK_RUN_ON_MUSL_LIBC`，`1` 表示使用了 musl libc，`0` 表示没有使用。
