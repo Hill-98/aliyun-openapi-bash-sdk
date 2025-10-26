@@ -74,7 +74,7 @@ aliapi_rpc() {
 }
 
 _aliapi_check_vars() {
-    if [[ -z ${AliAccessKeyId:-} || -z ${AliAccessKeySecret:-X} ]]; then
+    if [[ -z ${AliAccessKeyId:-} || -z ${AliAccessKeySecret:-} ]]; then
         echo "Aliyun OpenAPI SDK: 'AliAccessKeyId' or 'AliAccessKeySecret' environment variable not found" >&2
         return 3
     fi
