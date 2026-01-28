@@ -17,6 +17,8 @@ if [[ -z $ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] && command -v ldd &> /dev/null; then
 fi
 
 ALIYUN_SDK_LAST_HTTP_CODE=0
+ALIYUN_SDK_REQUEST_RETRY=${ALIYUN_SDK_REQUEST_RETRY:-0}
+ALIYUN_SDK_REQUEST_RETRY_DELAY=${ALIYUN_SDK_REQUEST_RETRY_DELAY:-3}
 
 # aliapi_rpc <http_method> <host> <api_version> <api_action> [<--key> <value>...]
 aliapi_rpc() {
@@ -67,7 +69,12 @@ aliapi_rpc() {
     _signature=$(_aliapi_signature_rpc "$_http_method" "${_query_str:0:-1}")
     _query_str+="Signature=$(_aliapi_urlencode "$_signature")"
     local _curl_out _http_url="https://$_http_host/?$_query_str"
-    _curl_out=$(curl --location --silent --show-error --request "$_http_method" --write-out "%{http_code}" --connect-timeout 3 "$_http_url")
+    for ((i = 0 ; i < $((ALIYUN_SDK_REQUEST_RETRY + 1)) ; i++ )); do
+        _curl_out=$(curl --location --silent --show-error --request "$_http_method" --write-out "%{http_code}" --connect-timeout 3 "$_http_url") && break
+        if [[ $i -ne $ALIYUN_SDK_REQUEST_RETRY ]]; then
+            sleep "$ALIYUN_SDK_REQUEST_RETRY_DELAY"
+        fi
+    done
     printf %s "${_curl_out:0:-3}"
     ALIYUN_SDK_LAST_HTTP_CODE=${_curl_out:${#_curl_out}-3}
     [[ $ALIYUN_SDK_LAST_HTTP_CODE -eq 200 ]] && return 0 || return 1

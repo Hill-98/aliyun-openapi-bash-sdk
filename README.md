@@ -52,6 +52,11 @@ get_show_size() {
     echo 50
 }
 
+# API 请求重试次数（默认为 0）
+ALIYUN_SDK_REQUEST_RETRY=0
+# API 请求重试间隔延迟（单位为秒，默认为 3 秒）
+ALIYUN_SDK_REQUEST_RETRY_DELAY=3
+
 # 获取 SSL 证书列表：https://help.aliyun.com/document_detail/126511.html
 # 如果值以 () 结尾，那么 SDK 会假设它是一个函数，获取值时会判断函数是否存在并执行。
 # 如果不存在则使用原始值，所以这里 ShowSize 的值是 50。
