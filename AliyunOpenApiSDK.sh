@@ -9,11 +9,7 @@ done
 unset _aliapi_command
 
 if [[ -z $ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] && command -v ldd &> /dev/null; then
-    if [[ $(ldd "$SHELL") == *"ld-musl"* ]]; then
-        ALIYUN_SDK_RUN_ON_MUSL_LIBC=1
-    else
-        ALIYUN_SDK_RUN_ON_MUSL_LIBC=0
-    fi
+    ALIYUN_SDK_RUN_ON_MUSL_LIBC=$([[ $(ldd "$SHELL") == *"ld-musl"* ]] && echo 1 || echo 0)
 fi
 
 ALIYUN_SDK_LAST_HTTP_CODE=0
@@ -130,7 +126,7 @@ _aliapi_urlencode() {
         case $char in
             [-._~0-9A-Za-z]) printf %c "$char";;
             *)
-                if [[ ALIYUN_SDK_RUN_ON_MUSL_LIBC -eq 0 ]]; then
+                if [[ ${ALIYUN_SDK_RUN_ON_MUSL_LIBC:-0} -eq 0 ]]; then
                     printf %%%02X "'$char"
                 else
                     # Hack musl libc for not ASCII chars (incomplete test)
