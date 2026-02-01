@@ -97,10 +97,8 @@ jobs:
   test-on-ubuntu:
     runs-on: ubuntu-latest
     steps:
-      - name: Update package
-        run: sudo apt update -y && sudo apt upgrade -y
       - name: Install dependencies
-        run: sudo apt install -y bash curl git openssl
+        run: sudo apt update -y && sudo apt install -y bash curl openssl
       - name: Bash version
         run: bash --version
       - name: CURL version
