@@ -8,7 +8,7 @@ for _aliapi_command in openssl curl; do
 done
 unset _aliapi_command
 
-if [[ -z $ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] && command -v ldd &> /dev/null; then
+if [[ ! -v ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] && command -v ldd &> /dev/null; then
     ALIYUN_SDK_RUN_ON_MUSL_LIBC=$([[ $(ldd "$SHELL") == *"ld-musl"* ]] && echo 1 || echo 0)
 fi
 
