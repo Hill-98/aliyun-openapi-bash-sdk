@@ -12,6 +12,7 @@ if [[ ! -v ALIYUN_SDK_RUN_ON_MUSL_LIBC ]] && command -v ldd &> /dev/null; then
     ALIYUN_SDK_RUN_ON_MUSL_LIBC=$([[ $(ldd "$SHELL") == *"ld-musl"* ]] && echo 1 || echo 0)
 fi
 
+ALIYUN_SDK_HTTP_ERROR_TO_STDERR=${ALIYUN_SDK_HTTP_ERROR_TO_STDERR:-0}
 ALIYUN_SDK_LAST_HTTP_CODE=0
 ALIYUN_SDK_REQUEST_RETRY=${ALIYUN_SDK_REQUEST_RETRY:-0}
 ALIYUN_SDK_REQUEST_RETRY_DELAY=${ALIYUN_SDK_REQUEST_RETRY_DELAY:-3}
@@ -73,6 +74,9 @@ aliapi_rpc() {
     done
     printf %s "${_curl_out:0:-3}"
     ALIYUN_SDK_LAST_HTTP_CODE=${_curl_out:${#_curl_out}-3}
+    if [[ $ALIYUN_SDK_HTTP_ERROR_TO_STDERR -eq 1 && $ALIYUN_SDK_LAST_HTTP_CODE -ge 400 ]]; then
+        echo "${_curl_out:0:-3}" >&2
+    fi
     [[ $ALIYUN_SDK_LAST_HTTP_CODE -eq 200 ]] && return 0 || return 1
 }
 

@@ -52,6 +52,8 @@ get_show_size() {
     echo 50
 }
 
+# 如果设置为 1，OpenAPI 请求出错时将结果输出到 stderr。
+ALIYUN_SDK_HTTP_ERROR_TO_STDERR=0
 # API 请求重试次数（默认为 0）
 ALIYUN_SDK_REQUEST_RETRY=0
 # API 请求重试间隔延迟（单位为秒，默认为 3 秒）

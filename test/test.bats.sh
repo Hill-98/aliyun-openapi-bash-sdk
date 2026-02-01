@@ -94,6 +94,13 @@ test_cli() { #@test
 
     run -0 ./AliyunOpenApiSDK.sh --rpc GET tag.aliyuncs.com 2018-08-28 ListTagKeys --RegionId cn-hangzhou --QueryType MetaTag
     assert_output --partial '"Key":"openapi-shell-sdk-test"'
+
+    run -1 /bin/bash -c './AliyunOpenApiSDK.sh --rpc GET sts.aliyuncs.com 2015-04-01 AssumeRole >/dev/null'
+    assert_output --regexp '^$'
+
+    export ALIYUN_SDK_HTTP_ERROR_TO_STDERR=1
+    run -1 /bin/bash -c './AliyunOpenApiSDK.sh --rpc GET sts.aliyuncs.com 2015-04-01 AssumeRole >/dev/null'
+    assert_output --partial '"Code":"MissingRoleArn"'
 }
 
 test_command_not_found() { #@test
