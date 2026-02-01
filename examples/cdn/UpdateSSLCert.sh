@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # 使用的 OpenAPI
-# CAS: https://help.aliyun.com/document_detail/126507.html
-# CDN：https://help.aliyun.com/document_detail/106661.html
+# CAS: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-overview
+# CDN：https://help.aliyun.com/zh/cdn/developer-reference/api-cdn-2018-05-10-overview
 
 # 可配合 acme.sh 使用的 renewHook 脚本：自动将新证书上传至阿里云并更新对应 CDN 域名，然后删除对应域名的旧证书。
 # 每次 API 执行都会检测是否失败，如果失败，会中断脚本执行并返回自定义错误代码。
@@ -46,12 +46,12 @@ DOMAIN_LIST=(
 )
 
 # 获取证书列表
-result=$(aliapi_rpc GET cas.aliyuncs.com  2018-07-13 DescribeUserCertificateList --CurrentPage 1 --ShowSize 50)  || exit 101
+result=$(aliapi_rpc GET cas.aliyuncs.com 2020-04-07 ListUserCertificateOrder --OrderType UPLOAD)  || exit 101
 # 使用 jq 处理返回的 JSON 数据并提取出匹配当前证书域名的证书列表的 ID，用于稍后的删除旧证书操作。
-cert_list=$(jq -cr ".CertificateList|map(select(.common == \"$DOMAIN\"))|map(.id)|.[]" <<< "$result")
+cert_list=$(jq -cr ".CertificateOrderList|map(select(.CommonName == \"$DOMAIN\"))|map(.CertificateId)|.[]" <<< "$result")
 
 # 上传新的证书
-aliapi_rpc GET cas.aliyuncs.com 2018-07-13 CreateUserCertificate --Cert "get_cert()" --Key "get_key()" --Name "$CERT_NAME" || exit 102
+aliapi_rpc GET cas.aliyuncs.com 2020-04-07 UploadUserCertificate --Cert "get_cert()" --Key "get_key()" --Name "$CERT_NAME" || exit 102
 
 # 设置 CDN 域名列表使用新的证书
 for _domain in "${DOMAIN_LIST[@]}"; do
@@ -61,6 +61,6 @@ unset _domain
 
 # 删除旧的证书
 for _id in ${cert_list}; do
-    aliapi_rpc GET cas.aliyuncs.com 2018-07-13 DeleteUserCertificate --CertId "$_id" || exit 104
+    aliapi_rpc GET cas.aliyuncs.com 2020-04-07 DeleteUserCertificate --CertId "$_id" || exit 104
 done
 unset _id
